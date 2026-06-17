@@ -1,0 +1,1636 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8"/>
+<meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+<title>SkillDeck CRM — Prospection</title>
+<link rel="preconnect" href="https://fonts.googleapis.com"/><link rel="preconnect" href="https://fonts.gstatic.com" crossorigin/><link href="https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@300;400;500;600;700;800&display=swap" rel="stylesheet"/>
+<link rel="manifest" href="/manifest.webmanifest"/>
+<meta name="theme-color" content="#6c47ff"/>
+<link rel="icon" href="/icon.svg"/>
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.5.0/dist/chart.umd.js" integrity="sha384-iU8HYtnGQ8Cy4zl7gbNMOhsDTTKX02BTXptVP/vqAWIaTfM7isw76iyZCsjL2eVi" crossorigin="anonymous"></script>
+<style>
+:root{
+  color-scheme: light;
+  --bg:#f4f5fa; --card:#ffffff; --panel-tint:#f7f8fc;
+  --border:#e7e7f0; --border2:#eef0f5;
+  --text:#1a1a24; --muted:#6b6f7d; --muted2:#9aa0ad;
+  --violet:#6c47ff; --violet-soft:#f1ecff; --blue:#2563eb;
+  --green:#16a34a; --green-soft:#e7f6ec;
+  --amber:#d97706; --amber-soft:#fdf1de;
+  --red:#dc2626; --red-soft:#fdeaea;
+  --gray-soft:#eef0f5;
+  --ink:#15141c; --ink2:#1e1b29; --ink-line:#2c2839; --ink-muted:#928da3;
+  --shadow:0 1px 2px rgba(30,24,18,.05),0 2px 8px rgba(30,24,18,.045);
+  --shadow-lg:0 26px 64px rgba(18,14,38,.30);
+  --radius:13px;
+  --sans:'Plus Jakarta Sans',ui-sans-serif,-apple-system,BlinkMacSystemFont,'Segoe UI',sans-serif;
+  --display:var(--sans);
+  --mono:var(--sans);
+  --font:var(--sans);
+}
+*,*::before,*::after{box-sizing:border-box;margin:0;padding:0}
+body{font-family:var(--sans);color:var(--text);font-size:14px;line-height:1.5;-webkit-font-smoothing:antialiased;
+  background:
+    radial-gradient(1100px 560px at 100% -8%, rgba(108,71,255,.06), transparent 60%),
+    radial-gradient(820px 460px at -8% 112%, rgba(37,99,235,.05), transparent 55%),
+    var(--bg);}
+a{color:var(--violet);text-decoration:none}
+button{font-family:inherit;cursor:pointer;border:none;background:none;color:inherit}
+.wrap{max-width:1320px;margin:0 auto;padding:18px 20px 40px}
+::selection{background:rgba(108,71,255,.18)}
+
+/* Layout */
+.app{display:grid;grid-template-columns:256px 1fr;min-height:100vh;max-width:1600px;margin:0 auto}
+.sidebar{position:sticky;top:0;align-self:start;height:100vh;display:flex;flex-direction:column;padding:20px 14px 16px;gap:3px;z-index:10;color:var(--text);background:var(--card);border-right:1px solid var(--border)}
+.sidebar .brand{display:flex;align-items:center;gap:11px;padding:4px 8px 4px}
+.logo-mark{width:34px;height:34px;border-radius:10px;flex:none;display:flex;align-items:center;justify-content:center;
+  font-family:var(--display);font-weight:800;font-size:19px;color:#fff;
+  background:linear-gradient(140deg,#7c5cff,#5a37e0 60%,#3f6ae0);
+  box-shadow:0 6px 18px rgba(108,71,255,.45),inset 0 1px 0 rgba(255,255,255,.35)}
+.brand-text{display:flex;flex-direction:column;line-height:1.05}
+.brand-word{font-family:var(--display);font-weight:800;font-size:19px;letter-spacing:-.4px;color:var(--text)}
+.brand-word i{font-style:normal;color:var(--violet)}
+.brand-tag{font-size:9.5px;letter-spacing:1.6px;text-transform:uppercase;color:var(--muted2);font-weight:700;margin-top:3px}
+.side-nav{display:flex;flex-direction:column;gap:3px;margin-top:14px}
+.side-nav button{position:relative;display:flex;align-items:center;gap:12px;padding:10px 13px;border-radius:10px;
+  font-size:13.5px;font-weight:600;color:var(--muted);text-align:left;width:100%;transition:.16s ease}
+.side-nav button .ic{font-size:15px;width:20px;text-align:center;opacity:.9}
+.side-nav button:not(.active):hover{background:var(--gray-soft);color:var(--text)}
+.side-nav button.active{background:var(--violet);color:#fff;box-shadow:0 4px 12px rgba(108,71,255,.28)}
+.side-sep{height:1px;background:var(--border2);margin:13px 6px}
+.side-actions{display:flex;flex-direction:column;gap:7px}
+.side-actions .btn{width:100%;justify-content:flex-start}
+.sidebar .btn-ghost{background:var(--card);border:1px solid var(--border);color:var(--text)}
+.sidebar .btn-ghost:hover{border-color:var(--violet);color:var(--violet)}
+.side-foot{margin-top:auto;padding-top:14px;border-top:1px solid var(--border2)}
+.side-foot .user-chip{width:100%;background:var(--card);border:1px solid var(--border);color:var(--text)}
+.main{padding:26px 30px 48px;min-width:0}
+.main-head{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-bottom:22px;flex-wrap:wrap}
+.main-head h2{font-family:var(--display);font-size:27px;font-weight:800;letter-spacing:-.6px}
+@media(max-width:860px){
+  .app{grid-template-columns:1fr}
+  .sidebar{position:static;height:auto;flex-direction:row;flex-wrap:wrap;align-items:center;border-right:none;border-bottom:1px solid var(--border);gap:8px}
+  .side-nav{flex-direction:row;flex-wrap:wrap;margin-top:0}
+  .side-sep{display:none}
+  .side-actions{flex-direction:row;flex-wrap:wrap}
+  .side-actions .btn{width:auto}
+  .side-foot{margin:0;padding-top:0;border-top:none;width:100%}
+  .main{padding:18px}
+}
+.topbar{display:flex;align-items:center;justify-content:space-between;gap:16px;flex-wrap:wrap;margin-bottom:14px}
+.brand h1{font-family:var(--display);font-size:18px;font-weight:800}
+.brand p{font-size:12px;color:var(--muted)}
+.top-actions{display:flex;gap:9px;flex-wrap:wrap;align-items:center}
+
+/* Buttons */
+.btn{padding:9px 15px;border-radius:10px;font-weight:600;font-size:13px;display:inline-flex;align-items:center;gap:7px;transition:.15s;white-space:nowrap}
+.btn-primary{background:var(--violet);color:#fff;box-shadow:0 2px 10px rgba(108,71,255,.35)}
+.btn-primary:hover{background:#5a37e0;transform:translateY(-1px)}
+.btn-ghost{background:var(--card);color:var(--text);border:1px solid var(--border)}
+.btn-ghost:hover{border-color:var(--violet);color:var(--violet)}
+.btn-sm{padding:6px 11px;font-size:12px;border-radius:8px}
+
+/* Nav (legacy) */
+.nav{display:flex;gap:4px;background:var(--card);border:1px solid var(--border);border-radius:12px;padding:5px;margin-bottom:18px;box-shadow:var(--shadow);width:fit-content;flex-wrap:wrap}
+.nav button{padding:9px 16px;border-radius:9px;font-size:13.5px;font-weight:700;color:var(--muted)}
+.nav button.active{background:var(--violet);color:#fff}
+.view{display:none}
+.view.active{display:block;animation:fade .25s ease}
+@keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+
+/* KPIs */
+.kpis{display:grid;grid-template-columns:repeat(auto-fit,minmax(158px,1fr));gap:13px;margin-bottom:20px}
+.kpi{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:16px 17px 15px;box-shadow:var(--shadow);transition:.18s}
+.kpi:hover{box-shadow:0 6px 20px rgba(30,24,18,.08);transform:translateY(-1px)}
+.kpi .num{font-family:var(--mono);font-size:24px;font-weight:600;letter-spacing:-1px;font-feature-settings:"tnum"}
+.kpi .lbl{font-size:10.5px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted);font-weight:700;margin-top:5px}
+.kpi .bar{height:4px;border-radius:4px;margin-top:11px;background:var(--gray-soft);overflow:hidden}
+.kpi .bar span{display:block;height:100%;border-radius:4px}
+
+/* Filters */
+.filters{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:13px;margin-bottom:14px;box-shadow:var(--shadow);display:flex;gap:10px;flex-wrap:wrap;align-items:center}
+.filters input[type=text],.filters select{padding:9px 12px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:13px;background:var(--panel-tint);color:var(--text);transition:.15s}
+.filters input[type=text]:focus,.filters select:focus{outline:none;border-color:var(--violet);background:var(--card);box-shadow:0 0 0 3px rgba(108,71,255,.12)}
+.filters input[type=text]{flex:1;min-width:200px}
+.filters select{cursor:pointer}
+.seg{display:inline-flex;background:var(--gray-soft);border-radius:10px;padding:3px}
+.seg button{padding:7px 13px;border-radius:8px;font-size:12.5px;font-weight:600;color:var(--muted);transition:.15s}
+.seg button.active{background:var(--card);color:var(--text);box-shadow:var(--shadow)}
+.seg-toggle{padding:8px 13px;border-radius:10px;font-size:12.5px;font-weight:600;color:var(--muted);background:var(--card);border:1px solid var(--border);transition:.15s}
+.seg-toggle.active{background:var(--violet-soft);color:var(--violet);border-color:var(--violet)}
+
+/* Table */
+.tablecard{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);overflow:hidden}
+table{width:100%;border-collapse:collapse}
+thead th{text-align:left;font-size:10px;text-transform:uppercase;letter-spacing:.7px;color:var(--muted2);font-weight:700;padding:13px 16px;border-bottom:1px solid var(--border);background:var(--panel-tint)}
+tbody td{padding:12px 16px;border-bottom:1px solid var(--border2);vertical-align:middle}
+tbody tr{transition:.12s}
+tbody tr:last-child td{border-bottom:none}
+tbody tr:hover{background:var(--panel-tint);box-shadow:inset 2px 0 0 var(--violet)}
+.cell-name{font-weight:700;font-size:13.5px;letter-spacing:-.1px}
+.cell-sub{font-size:11.5px;color:var(--muted);margin-top:1px}
+.badge{display:inline-block;padding:3px 9px;border-radius:7px;font-size:10.5px;font-weight:700;letter-spacing:.2px;text-transform:uppercase}
+.b-esn{background:var(--violet-soft);color:var(--violet)}
+.b-cab{background:#e6efff;color:var(--blue)}
+.b-indep{background:#fce8f1;color:#be185d}
+.prio{font-size:11px;font-weight:700;display:inline-flex;align-items:center;gap:5px}
+.dot{width:7px;height:7px;border-radius:50%;display:inline-block}
+.statusSel{padding:5px 9px;border-radius:8px;font-size:11.5px;font-weight:700;border:1px solid transparent;cursor:pointer;font-family:inherit;appearance:none}
+.row-actions{display:flex;gap:6px;justify-content:flex-end}
+.icon-btn{width:30px;height:30px;border-radius:9px;border:1px solid var(--border);background:var(--card);display:inline-flex;align-items:center;justify-content:center;font-size:14px;transition:.15s}
+.icon-btn:hover{border-color:var(--violet);background:var(--violet-soft);transform:translateY(-1px)}
+.empty{padding:48px;text-align:center;color:var(--muted)}
+
+/* Avatars */
+.avatar{width:26px;height:26px;border-radius:50%;background:linear-gradient(140deg,#7c5cff,#3f6ae0);color:#fff;display:inline-flex;align-items:center;justify-content:center;font-size:10.5px;font-weight:700;font-family:var(--mono)}
+.avatar.sm{width:24px;height:24px;font-size:9.5px}
+.avatar.muted{background:var(--gray-soft);color:var(--muted)}
+
+/* Panels */
+.panel{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);box-shadow:var(--shadow);padding:20px}
+.panel h3{font-family:var(--display);font-size:15px;font-weight:700;margin-bottom:14px;display:flex;align-items:center;gap:8px;letter-spacing:-.2px}
+.panel h3 .count{margin-left:auto;font-family:var(--mono);font-size:12px;color:var(--muted);font-weight:600}
+.cols{display:grid;gap:15px}
+.cols.two{grid-template-columns:1fr 1fr}
+.cols.home{grid-template-columns:1.3fr 1fr}
+.list-item{display:flex;align-items:center;gap:11px;padding:10px 0;border-bottom:1px solid var(--border2);cursor:pointer;transition:.12s}
+.list-item:last-child{border-bottom:none}
+.list-item:hover{background:var(--panel-tint);margin:0 -10px;padding:10px;border-radius:10px}
+.li-main{flex:1;min-width:0}
+.li-name{font-weight:700;font-size:13px}
+.li-sub{font-size:11.5px;color:var(--muted)}
+.pill{padding:3px 9px;border-radius:7px;font-size:10.5px;font-weight:700;white-space:nowrap;font-family:var(--mono)}
+.goal-wrap{margin-top:8px}
+.goal-bar{height:9px;border-radius:6px;background:var(--gray-soft);overflow:hidden;margin-top:8px}
+.goal-bar span{display:block;height:100%;background:linear-gradient(90deg,var(--violet),#3f6ae0)}
+.hello{font-family:var(--display);font-size:26px;font-weight:800;letter-spacing:-.6px;margin-bottom:3px}
+.hello-sub{color:var(--muted);font-size:13px;margin-bottom:20px}
+
+/* Kanban */
+.kanban{display:grid;grid-auto-flow:column;grid-auto-columns:minmax(244px,1fr);gap:13px;overflow-x:auto;padding-bottom:10px}
+.kcol{background:var(--panel-tint);border:1px solid var(--border);border-radius:var(--radius);display:flex;flex-direction:column;min-height:120px}
+.kcol-head{padding:12px 14px;border-bottom:1px solid var(--border);font-weight:700;font-size:12.5px;display:flex;align-items:center;gap:8px;position:sticky;top:0;letter-spacing:.2px}
+.kcol-head .cnt{margin-left:auto;background:var(--card);color:var(--muted);border-radius:20px;padding:1px 9px;font-size:11px;font-family:var(--mono);border:1px solid var(--border)}
+.kcol-body{padding:10px;display:flex;flex-direction:column;gap:9px;flex:1;min-height:60px;transition:.15s}
+.kcol-body.drag-over{background:var(--violet-soft);outline:2px dashed var(--violet);outline-offset:-6px;border-radius:10px}
+.kcard{background:var(--card);border:1px solid var(--border);border-radius:11px;padding:12px;cursor:grab;box-shadow:var(--shadow);transition:.14s}
+.kcard:hover{border-color:var(--violet);transform:translateY(-2px);box-shadow:0 8px 22px rgba(30,24,18,.10)}
+.kcard:active{cursor:grabbing}
+.kcard.dragging{opacity:.45;transform:rotate(1.5deg)}
+.kcard .kc-top{display:flex;justify-content:space-between;align-items:flex-start;gap:8px;margin-bottom:6px}
+.kcard .kc-name{font-weight:700;font-size:13px;line-height:1.3}
+.kcard .kc-sub{font-size:11px;color:var(--muted)}
+.kcard .kc-foot{display:flex;align-items:center;gap:7px;margin-top:10px}
+
+/* Modals */
+.overlay{position:fixed;inset:0;background:rgba(18,14,30,.5);backdrop-filter:blur(4px);display:none;align-items:flex-start;justify-content:center;padding:34px 16px;z-index:50;overflow:auto}
+.overlay.open{display:flex}
+.modal{background:var(--card);border-radius:18px;width:100%;max-width:640px;box-shadow:var(--shadow-lg);border:1px solid var(--border);animation:pop .2s ease}
+@keyframes pop{from{opacity:0;transform:translateY(14px) scale(.985)}to{opacity:1;transform:none}}
+.modal-head{padding:20px 24px;border-bottom:1px solid var(--border);display:flex;justify-content:space-between;align-items:flex-start;gap:12px}
+.modal-head h3{font-family:var(--display);font-size:19px;font-weight:800;letter-spacing:-.3px}
+.modal-head .sub{font-size:12.5px;color:var(--muted);margin-top:4px}
+.close{font-size:22px;color:var(--muted);line-height:1;padding:2px 7px;border-radius:8px}
+.close:hover{background:var(--gray-soft)}
+.modal-body{padding:22px 24px}
+.field{margin-bottom:14px}
+.field label{display:block;font-size:11px;text-transform:uppercase;letter-spacing:.5px;font-weight:700;color:var(--muted);margin-bottom:6px}
+.field input,.field select,.field textarea{width:100%;padding:10px 12px;border:1px solid var(--border);border-radius:10px;font-family:inherit;font-size:13.5px;color:var(--text);background:var(--panel-tint);transition:.15s}
+.field input:focus,.field select:focus,.field textarea:focus{outline:none;border-color:var(--violet);background:var(--card);box-shadow:0 0 0 3px rgba(108,71,255,.12)}
+.field textarea{resize:vertical;min-height:70px;line-height:1.55}
+.grid2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.info-row{display:flex;gap:8px;flex-wrap:wrap;margin-bottom:16px}
+.chip{background:var(--gray-soft);border-radius:8px;padding:6px 10px;font-size:12px;font-weight:600}
+.chip b{color:var(--muted);font-weight:700}
+.modal-foot{padding:16px 24px;border-top:1px solid var(--border);display:flex;gap:9px;justify-content:flex-end;flex-wrap:wrap;background:var(--panel-tint);border-radius:0 0 18px 18px}
+.mail-box{background:var(--panel-tint);border:1px solid var(--border);border-radius:12px;padding:15px;margin-top:6px}
+.mail-box h4{font-family:var(--display);font-size:14px;font-weight:700;margin-bottom:11px;display:flex;align-items:center;gap:7px}
+.dtabs{display:flex;gap:4px;margin-bottom:16px;border-bottom:1px solid var(--border)}
+.dtabs button{padding:9px 14px;font-size:13px;font-weight:700;color:var(--muted);border-bottom:2px solid transparent;margin-bottom:-1px;transition:.15s}
+.dtabs button.active{color:var(--violet);border-color:var(--violet)}
+.dpane{display:none}.dpane.active{display:block}
+
+/* Timeline */
+.timeline{position:relative;padding-left:22px}
+.timeline::before{content:'';position:absolute;left:6px;top:4px;bottom:4px;width:2px;background:var(--border)}
+.tl-item{position:relative;padding:0 0 15px}
+.tl-item::before{content:'';position:absolute;left:-19px;top:3px;width:11px;height:11px;border-radius:50%;background:var(--violet);border:2px solid var(--card);box-shadow:0 0 0 1px var(--border)}
+.tl-item.k-mail::before{background:var(--blue)} .tl-item.k-statut::before{background:var(--violet)}
+.tl-item.k-appel::before{background:var(--green)} .tl-item.k-note::before{background:var(--amber)}
+.tl-item.k-rdv::before{background:#be185d}
+.tl-when{font-size:10.5px;color:var(--muted2);font-weight:600;font-family:var(--mono)}
+.tl-text{font-size:13px;font-weight:500}
+.tl-text b{font-weight:700}
+.task{display:flex;align-items:center;gap:10px;padding:9px 0;border-bottom:1px solid var(--border2)}
+.task:last-child{border-bottom:none}
+.task input[type=checkbox]{width:17px;height:17px;cursor:pointer;accent-color:var(--violet)}
+.task.done .task-label{text-decoration:line-through;color:var(--muted2)}
+.task-label{flex:1;font-size:13px}
+.task-due{font-size:11px;font-weight:700;font-family:var(--mono)}
+
+/* Login */
+.login-screen{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;
+  background:
+   radial-gradient(900px 600px at 78% 12%, rgba(108,71,255,.34), transparent 58%),
+   radial-gradient(760px 520px at 12% 92%, rgba(37,99,235,.28), transparent 55%),
+   linear-gradient(150deg,#100d1e,#15132e 55%,#0c0a18);}
+.login-screen::after{content:'';position:absolute;inset:0;opacity:.5;pointer-events:none;
+  background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:4px 4px}
+.login-card{position:relative;background:var(--card);border-radius:22px;box-shadow:0 40px 90px rgba(0,0,0,.5);width:100%;max-width:392px;padding:34px 30px;animation:pop .3s ease;border:1px solid rgba(255,255,255,.5)}
+.login-card .logo{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:22px;color:#fff;background:linear-gradient(140deg,#7c5cff,#5a37e0 60%,#3f6ae0);box-shadow:0 10px 26px rgba(108,71,255,.45);margin-bottom:18px}
+.login-card h2{font-family:var(--display);font-size:22px;font-weight:800;letter-spacing:-.4px}
+.login-card p{font-size:13px;color:var(--muted);margin:5px 0 24px}
+.login-card .field{margin-bottom:14px}
+.login-err{color:var(--red);font-size:12.5px;font-weight:600;margin-bottom:10px;display:none}
+.login-card .btn{width:100%;justify-content:center;padding:12px}
+.login-link{display:block;text-align:center;margin-top:16px;font-size:12px;color:var(--muted);cursor:pointer}
+.login-link:hover{color:var(--violet)}
+.user-chip{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:5px 6px 5px 10px;font-size:13px;font-weight:600}
+.user-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
+.user-row input{flex:1}
+.user-row .icon-btn{flex:none}
+
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--ink);color:#fff;padding:13px 22px;border-radius:12px;font-size:13.5px;font-weight:600;box-shadow:var(--shadow-lg);z-index:300;opacity:0;transition:.25s;pointer-events:none;border:1px solid rgba(255,255,255,.08)}
+.toast.show{opacity:1;transform:translateX(-50%) translateY(-4px)}
+.toast.err{background:#b91c1c}
+.note-hint{font-size:11.5px;color:var(--muted2);margin-top:4px}
+.chart-box{position:relative;height:262px}
+.stat-cards{display:grid;grid-template-columns:repeat(auto-fit,minmax(152px,1fr));gap:13px;margin-bottom:16px}
+.footer-note{text-align:center;color:var(--muted2);font-size:11.5px;margin:28px 0 6px}
+@media(max-width:820px){ .hide-sm{display:none} .grid2{grid-template-columns:1fr} .cols.two,.cols.home{grid-template-columns:1fr} }
+
+
+/* ── Thème sombre ── */
+[data-theme="dark"]{
+  --bg:#0e0d14; --card:#17161f; --panel-tint:#1c1b26;
+  --border:#2a2733; --border2:#221f2c;
+  --text:#ececf1; --muted:#9a96a8; --muted2:#6e6a7c;
+  --gray-soft:#232130;
+  --violet-soft:#241d3f; --green-soft:#11291f; --amber-soft:#2b2410; --red-soft:#311620;
+  --shadow:0 1px 2px rgba(0,0,0,.4),0 2px 10px rgba(0,0,0,.35);
+  --shadow-lg:0 30px 70px rgba(0,0,0,.6);
+}
+[data-theme="dark"] body{background:
+  radial-gradient(1100px 560px at 100% -8%, rgba(108,71,255,.14), transparent 60%),
+  radial-gradient(820px 460px at -8% 112%, rgba(37,99,235,.12), transparent 55%),
+  var(--bg);}
+[data-theme="dark"] .sidebar{background:linear-gradient(180deg,#1a1825,#15141c 32%,#131119);border-right:1px solid #000;color:#fff}
+[data-theme="dark"] .brand-word{color:#fff}
+[data-theme="dark"] .brand-word i{color:#a78bff}
+[data-theme="dark"] .brand-tag{color:var(--ink-muted)}
+[data-theme="dark"] .side-nav button{color:var(--ink-muted)}
+[data-theme="dark"] .side-nav button:not(.active):hover{background:rgba(255,255,255,.05);color:#e9e7f2}
+[data-theme="dark"] .side-nav button.active{background:linear-gradient(90deg,rgba(108,71,255,.22),rgba(108,71,255,.08));color:#fff;box-shadow:inset 2px 0 0 var(--violet)}
+[data-theme="dark"] .side-sep{background:var(--ink-line)}
+[data-theme="dark"] .side-foot{border-top:1px solid var(--ink-line)}
+[data-theme="dark"] .side-foot .user-chip{background:rgba(255,255,255,.06);border-color:rgba(255,255,255,.12);color:#fff}
+[data-theme="dark"] .sidebar .btn-ghost{background:rgba(255,255,255,.05);border-color:rgba(255,255,255,.12);color:#cdcad9}
+[data-theme="dark"] .sidebar .btn-ghost:hover{background:rgba(255,255,255,.1);color:#fff;border-color:rgba(255,255,255,.22)}
+[data-theme="dark"] .b-cab{background:#17263f;color:#84b4ff}
+[data-theme="dark"] .b-indep{background:#2e1626;color:#f0a8cf}
+[data-theme="dark"] select option{background:#17161f;color:#ececf1}
+[data-theme="dark"] .login-card{border-color:rgba(255,255,255,.08)}
+
+</style>
+</head>
+<body>
+
+<!-- Login -->
+<div class="login-screen" id="loginScreen">
+  <div class="login-card">
+    <div class="logo">S</div>
+    <h2>SkillDeck CRM</h2>
+    <p>Connecte-toi pour accéder à la prospection.</p>
+    <div class="login-err" id="loginErr">Identifiants incorrects.</div>
+    <div class="field"><label>Commercial</label><input type="text" id="loginUser" placeholder="Ton nom (ex. Tim)" onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()"/></div>
+    <div class="field"><label>Mot de passe</label>
+      <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+    <button class="btn btn-primary" onclick="doLogin()">Se connecter →</button>
+    <span class="login-link" onclick="openUsers()">＋ Gérer les commerciaux</span>
+  </div>
+</div>
+
+<div class="app">
+  <aside class="sidebar">
+    <div class="brand">
+      <span class="logo-mark">S</span>
+      <div class="brand-text"><span class="brand-word">Skill<i>Deck</i></span><span class="brand-tag">CRM · Prospection</span></div>
+    </div>
+    <nav class="side-nav" id="nav">
+      <button data-view="home" class="active" onclick="switchView('home')"><span class="ic">🏠</span> Accueil</button>
+      <button data-view="prospects" onclick="switchView('prospects')"><span class="ic">📇</span> Prospects</button>
+      <button data-view="pipeline" onclick="switchView('pipeline')"><span class="ic">🗂️</span> Pipeline</button>
+      <button data-view="clients" onclick="switchView('clients')"><span class="ic">🤝</span> Clients & CA</button>
+      <button data-view="mailing" onclick="switchView('mailing')"><span class="ic">📨</span> Mailing de masse</button>
+      <button data-view="analytics" onclick="switchView('analytics')"><span class="ic">📊</span> Analytics</button>
+    </nav>
+    <div class="side-sep"></div>
+    <div class="side-actions">
+      <button class="btn btn-primary" onclick="openEdit(null)">＋ Prospect</button>
+      <button class="btn btn-ghost" onclick="exportCSV()">⬇︎ Export CSV</button>
+      <button class="btn btn-ghost" onclick="openSettings()">⚙️ Réglages</button>
+      <button class="btn btn-ghost" id="themeBtn" onclick="toggleTheme()">🌙 Thème sombre</button>
+    </div>
+    <div class="side-foot"><span class="user-chip" id="userChip"></span></div>
+  </aside>
+
+  <main class="main">
+    <div class="main-head"><h2 id="viewTitle">Accueil</h2></div>
+
+  <!-- HOME -->
+  <section class="view active" id="view-home"></section>
+
+  <!-- PROSPECTS -->
+  <section class="view" id="view-prospects">
+    <div class="kpis" id="kpis"></div>
+    <div class="filters">
+      <input type="text" id="search" placeholder="🔍 Rechercher (nom, ville, segment…)" oninput="render()"/>
+      <div class="seg" id="typeSeg">
+        <button class="active" data-type="" onclick="setType(this)">Tous</button>
+        <button data-type="ESN" onclick="setType(this)">ESN</button>
+        <button data-type="Cabinet de recrutement" onclick="setType(this)">Cabinets</button>
+        <button data-type="Recruteur indépendant" onclick="setType(this)">Indé</button>
+      </div>
+      <select id="fStatus" onchange="render()"><option value="">Tous les statuts</option></select>
+      <select id="fPrio" onchange="render()"><option value="">Toutes priorités</option><option>Haute</option><option>Moyenne</option><option>Basse</option></select>
+      <select id="fSort" onchange="render()">
+        <option value="prio">Tri : priorité</option><option value="nom">Tri : nom A-Z</option>
+        <option value="statut">Tri : statut</option><option value="ville">Tri : ville</option><option value="relance">Tri : relance</option>
+      </select>
+      <button class="seg-toggle" id="mineBtn" onclick="toggleMine()">👤 Mes prospects</button>
+      <button class="seg-toggle" id="relanceBtn" onclick="toggleRelance()">⏰ Relances à faire</button>
+      <button class="seg-toggle" id="targetBtn" onclick="toggleTarget()">🎯 Petites ESN</button>
+    </div>
+    <div class="tablecard">
+      <table>
+        <thead><tr>
+          <th>Établissement</th><th>Type</th><th class="hide-sm">Ville</th>
+          <th class="hide-sm">Priorité</th><th>Statut</th><th class="hide-sm">Resp.</th><th style="text-align:right">Actions</th>
+        </tr></thead>
+        <tbody id="tbody"></tbody>
+      </table>
+      <div class="empty" id="empty" style="display:none">Aucun prospect ne correspond aux filtres.</div>
+    </div>
+  </section>
+
+  <!-- PIPELINE -->
+  <section class="view" id="view-pipeline">
+    <div class="filters">
+      <div class="seg" id="typeSeg2">
+        <button class="active" data-type="" onclick="setType2(this)">Tous types</button>
+        <button data-type="ESN" onclick="setType2(this)">ESN</button>
+        <button data-type="Cabinet de recrutement" onclick="setType2(this)">Cabinets</button>
+        <button data-type="Recruteur indépendant" onclick="setType2(this)">Indé</button>
+      </div>
+      <button class="seg-toggle" id="mineBtn2" onclick="toggleMine()">👤 Mes prospects</button>
+      <span class="note-hint" style="margin-left:auto">Glisse une carte d'une colonne à l'autre pour changer son statut.</span>
+    </div>
+    <div class="kanban" id="kanban"></div>
+  </section>
+
+  <!-- CLIENTS -->
+  <section class="view" id="view-clients">
+    <div class="stat-cards" id="clientStats"></div>
+    <div class="cols two" style="margin-bottom:14px">
+      <div class="panel"><h3>💶 CA signé par commercial</h3><div class="chart-box"><canvas id="chCaOwner"></canvas></div></div>
+      <div class="panel"><h3>📅 CA signé par mois</h3><div class="chart-box"><canvas id="chCaMonth"></canvas></div></div>
+    </div>
+    <div class="tablecard">
+      <table>
+        <thead><tr><th>Client</th><th class="hide-sm">Contact</th><th class="hide-sm">Resp.</th><th>Récurrence</th><th style="text-align:right">CA (€ HT)</th><th class="hide-sm">Client depuis</th><th></th></tr></thead>
+        <tbody id="clientsBody"></tbody>
+      </table>
+      <div class="empty" id="clientsEmpty" style="display:none">Aucun client pour l'instant. Passe un prospect en statut « Gagné » pour l'ajouter ici.</div>
+    </div>
+  </section>
+
+  <!-- MAILING -->
+  <section class="view" id="view-mailing">
+    <div class="cols two" style="align-items:start">
+      <div class="panel">
+        <h3>📨 Destinataires <span class="count" id="mailCount">0</span></h3>
+        <div style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px">
+          <select id="mailType" onchange="renderMailing()"><option value="">Tous types</option><option>ESN</option><option>Cabinet de recrutement</option><option>Recruteur indépendant</option></select>
+          <select id="mailStatut" onchange="renderMailing()"></select>
+          <button class="seg-toggle" id="mailTargetBtn" onclick="mailTarget=!mailTarget;this.classList.toggle('active',mailTarget);renderMailing()">🎯 Petites ESN</button>
+          <button class="seg-toggle" id="mailMineBtn" onclick="mailMine=!mailMine;this.classList.toggle('active',mailMine);renderMailing()">👤 Mes prospects</button>
+        </div>
+        <div class="note-hint" id="mailStat" style="margin-bottom:10px"></div>
+        <div id="mailList" style="max-height:440px;overflow:auto"></div>
+        <div class="field" style="margin-top:14px;margin-bottom:0"><label>📋 Tous les e-mails de la sélection (copiable)</label><textarea id="mailEmails" readonly onclick="this.select()" style="min-height:96px;font-size:12px;font-family:var(--mono)"></textarea></div>
+      </div>
+      <div class="panel">
+        <h3>✍️ Message</h3>
+        <div class="field"><label>Modèle</label><select id="mailTmpl" onchange="applyMailTemplate()"></select></div>
+        <div class="field"><label>Objet</label><input type="text" id="mailSubject"/></div>
+        <div class="field"><label>Message — variables : {contact} {nom} {ville} {signature}</label><textarea id="mailBody" style="min-height:240px"></textarea></div>
+        <div style="display:flex;gap:8px;flex-wrap:wrap">
+          <button class="btn btn-primary btn-sm" onclick="bulkDrafts()">📥 Créer les brouillons Gmail</button>
+          <button class="btn btn-ghost btn-sm" onclick="copyMailingEmails()">📋 Copier les e-mails</button>
+          <button class="btn btn-ghost btn-sm" onclick="mailtoBcc()">↗︎ Ouvrir (BCC)</button>
+          <button class="btn btn-ghost btn-sm" onclick="exportMailingCSV()">⬇︎ CSV sélection</button>
+        </div>
+        <div class="note-hint" style="margin-top:10px">Un brouillon Gmail personnalisé est créé par destinataire (variables remplies), dans ton compte — tu valides avant envoi. Dispo dans Cowork ; sinon « Copier les e-mails » + ton outil d'emailing.</div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ANALYTICS -->
+  <section class="view" id="view-analytics">
+    <div class="stat-cards" id="statCards"></div>
+    <div class="cols two">
+      <div class="panel"><h3>🚦 Pipeline par statut</h3><div class="chart-box"><canvas id="chStatus"></canvas></div></div>
+      <div class="panel"><h3>🏷️ Répartition par type</h3><div class="chart-box"><canvas id="chType"></canvas></div></div>
+    </div>
+    <div class="cols two" style="margin-top:14px">
+      <div class="panel"><h3>👥 Prospects par commercial</h3><div class="chart-box"><canvas id="chOwner"></canvas></div></div>
+      <div class="panel"><h3>📈 Activité (14 derniers jours)</h3><div class="chart-box"><canvas id="chActivity"></canvas></div></div>
+    </div>
+  </section>
+
+  <div class="footer-note">SkillDeck · outil interne de prospection — données enregistrées localement dans ce navigateur.</div>
+  </main>
+</div>
+
+<div class="overlay" id="detailOverlay" onclick="if(event.target===this)closeModal('detailOverlay')"><div class="modal" id="detailModal"></div></div>
+<div class="overlay" id="editOverlay" onclick="if(event.target===this)closeModal('editOverlay')"><div class="modal" id="editModal"></div></div>
+<div class="overlay" id="setOverlay" onclick="if(event.target===this)closeModal('setOverlay')"><div class="modal" id="setModal"></div></div>
+<div class="overlay" id="usersOverlay" onclick="if(event.target===this)closeModal('usersOverlay')"><div class="modal" id="usersModal"></div></div>
+<div class="toast" id="toast"></div>
+
+<script>
+/* ═══════════════ Référentiels ═══════════════ */
+const STATUSES = [
+  {k:'À contacter', c:'var(--muted)',  bg:'var(--gray-soft)',  hex:'#9ca3af'},
+  {k:'Contacté',    c:'var(--blue)',   bg:'#e8f0ff',           hex:'#2563eb'},
+  {k:'Relancé',     c:'var(--amber)',  bg:'var(--amber-soft)', hex:'#d97706'},
+  {k:'En discussion',c:'var(--violet)',bg:'var(--violet-soft)',hex:'#6c47ff'},
+  {k:'Gagné',       c:'var(--green)',  bg:'var(--green-soft)', hex:'#16a34a'},
+  {k:'Perdu',       c:'var(--red)',    bg:'var(--red-soft)',   hex:'#dc2626'}
+];
+const PRIO_DOT = {Haute:'var(--red)',Moyenne:'var(--amber)',Basse:'var(--muted2)'};
+const KIND_LBL = {mail:'E-mail',statut:'Statut',appel:'Appel',note:'Note',rdv:'RDV',autre:'Activité'};
+
+const SEED = [
+  {nom:'Capgemini',type:'ESN',segment:'Conseil & intégration, cloud, data',ville:'Issy-les-Moulineaux',taille:'> 340 000',site:'https://www.capgemini.com/fr-fr/',prio:'Moyenne',notes:'Leader FR. Cible grands comptes, cycle long — viser une practice / BU.'},
+  {nom:'Sopra Steria',type:'ESN',segment:'Conseil & transformation digitale',ville:'Paris',taille:'~ 56 000',site:'https://www.soprasteria.com/fr',prio:'Moyenne',notes:''},
+  {nom:'Atos / Eviden',type:'ESN',segment:'Cloud, cybersécurité, big data',ville:'Bezons',taille:'~ 90 000',site:'https://atos.net/fr/france',prio:'Moyenne',notes:''},
+  {nom:'Inetum',type:'ESN',segment:'Services & solutions digitales',ville:'Paris',taille:'~ 28 000',site:'https://www.inetum.com/fr',prio:'Haute',notes:''},
+  {nom:'CGI France',type:'ESN',segment:'Intégration systèmes, outsourcing',ville:'Paris',taille:'~ 90 000 (monde)',site:'https://www.cgi.com/france/fr-fr',prio:'Moyenne',notes:''},
+  {nom:'Alten',type:'ESN',segment:'Ingénierie & R&D, IT',ville:'Boulogne-Billancourt',taille:'~ 57 000',site:'https://www.alten.fr',prio:'Haute',notes:'Gros volume de consultants → fort besoin de dossiers de compétences.'},
+  {nom:'Capgemini Engineering',type:'ESN',segment:'Ingénierie (ex-Altran)',ville:'Paris',taille:'> 55 000',site:'https://capgemini-engineering.com/fr/',prio:'Moyenne',notes:''},
+  {nom:'Akkodis',type:'ESN',segment:'Engineering & IT (Adecco)',ville:'Lyon',taille:'~ 50 000',site:'https://www.akkodis.com/fr-fr',prio:'Haute',notes:''},
+  {nom:'Expleo',type:'ESN',segment:'Engineering, qualité, IT',ville:'Montigny-le-Bretonneux',taille:'~ 19 000',site:'https://expleogroup.com/fr/',prio:'Haute',notes:''},
+  {nom:'Sogeti',type:'ESN',segment:'Tests, cloud, cybersécurité (Capgemini)',ville:'Paris',taille:'~ 25 000',site:'https://www.sogeti.com/fr-fr/',prio:'Moyenne',notes:''},
+  {nom:'Devoteam',type:'ESN',segment:'Cloud, data, cybersécurité',ville:'Levallois-Perret',taille:'~ 11 000',site:'https://www.devoteam.com/fr/',prio:'Haute',notes:''},
+  {nom:'Sii Group',type:'ESN',segment:'Ingénierie & IT',ville:'Paris',taille:'~ 16 000',site:'https://www.sii-group.com/fr-fr',prio:'Haute',notes:''},
+  {nom:'Talan',type:'ESN',segment:'Conseil & transformation, data',ville:'Paris',taille:'~ 7 000',site:'https://talan.com/',prio:'Haute',notes:''},
+  {nom:'Astek',type:'ESN',segment:'Ingénierie & IT',ville:'Boulogne-Billancourt',taille:'~ 8 000',site:'https://www.astekgroup.fr/',prio:'Haute',notes:''},
+  {nom:'Aubay',type:'ESN',segment:'Banque/assurance, IT',ville:'Boulogne-Billancourt',taille:'~ 8 000',site:'https://aubay.com/fr/',prio:'Haute',notes:''},
+  {nom:'Neurones',type:'ESN',segment:'Conseil, infogérance, intégration',ville:'Nanterre',taille:'~ 6 500',site:'https://www.neurones.net/',prio:'Haute',notes:''},
+  {nom:'Davidson Consulting',type:'ESN',segment:'Conseil tech & management',ville:'Paris',taille:'~ 3 500',site:'https://www.davidson.fr/',prio:'Haute',notes:'Culture forte, croissance — bon profil early adopter.'},
+  {nom:'Onepoint',type:'ESN',segment:'Conseil & architecte transformation',ville:'Paris',taille:'~ 3 500',site:'https://www.groupeonepoint.com/',prio:'Haute',notes:''},
+  {nom:'mc2i',type:'ESN',segment:'Conseil SI',ville:'Paris',taille:'~ 1 200',site:'https://www.mc2i.fr/',prio:'Haute',notes:''},
+  {nom:'Keyrus',type:'ESN',segment:'Data & digital',ville:'Levallois-Perret',taille:'~ 3 500',site:'https://www.keyrus.com/fr/',prio:'Haute',notes:''},
+  {nom:'Micropole',type:'ESN',segment:'Data, BI, cloud',ville:'Levallois-Perret',taille:'~ 1 200',site:'https://www.micropole.com/',prio:'Haute',notes:''},
+  {nom:'Hardis Group',type:'ESN',segment:'Conseil, dev, supply chain',ville:'Grenoble',taille:'~ 1 500',site:'https://www.hardis-group.com/',prio:'Haute',notes:''},
+  {nom:'SQLI',type:'ESN',segment:'Digital & e-commerce',ville:'Levallois-Perret',taille:'~ 2 000',site:'https://www.sqli.com/fr',prio:'Haute',notes:''},
+  {nom:'Ippon Technologies',type:'ESN',segment:'Dev, cloud, data (craft)',ville:'Paris',taille:'~ 600',site:'https://www.ippon.fr/',prio:'Haute',notes:''},
+  {nom:'Zenika',type:'ESN',segment:'Dev, agilité, cloud',ville:'Paris',taille:'~ 600',site:'https://www.zenika.com/',prio:'Haute',notes:''},
+  {nom:'Cellenza',type:'ESN',segment:'Cloud Microsoft, DevOps',ville:'Paris',taille:'~ 300',site:'https://www.cellenza.com/',prio:'Moyenne',notes:''},
+  {nom:'Klanik',type:'ESN',segment:'Ingénierie & IT',ville:'Marseille',taille:'~ 1 000',site:'https://www.klanik.com/',prio:'Haute',notes:''},
+  {nom:'Niji',type:'ESN',segment:'Conseil & numérique',ville:'Rennes',taille:'~ 1 200',site:'https://www.niji.fr/',prio:'Haute',notes:''},
+  {nom:'Smile',type:'ESN',segment:'Open source, web, IoT',ville:'Asnières-sur-Seine',taille:'~ 2 000',site:'https://www.smile.eu/fr',prio:'Haute',notes:''},
+  {nom:'Infotel',type:'ESN',segment:'Services IT, data',ville:'Bagneux',taille:'~ 3 000',site:'https://www.infotel.com/',prio:'Haute',notes:''},
+  {nom:'Magellan Partners',type:'ESN',segment:'Conseil, data, cloud',ville:'Paris',taille:'~ 2 500',site:'https://www.magellan-partners.com/',prio:'Haute',notes:''},
+  {nom:'Hays Technology',type:'Cabinet de recrutement',segment:'Recrutement IT (généraliste)',ville:'Paris',taille:'Grand réseau',site:'https://www.hays.fr/',prio:'Haute',notes:'Présente des profils candidats aux clients = usage direct SkillDeck.'},
+  {nom:'Michael Page Technology',type:'Cabinet de recrutement',segment:'Cadres IT & digital',ville:'Paris',taille:'PageGroup',site:'https://www.michaelpage.fr/',prio:'Haute',notes:''},
+  {nom:'Robert Walters',type:'Cabinet de recrutement',segment:'Tech & digital, cadres',ville:'Paris',taille:'International',site:'https://www.robertwalters.fr/',prio:'Moyenne',notes:''},
+  {nom:'Robert Half Technology',type:'Cabinet de recrutement',segment:'IT & dev',ville:'Paris',taille:'International',site:'https://www.roberthalf.com/fr/fr',prio:'Moyenne',notes:''},
+  {nom:'Urban Linker',type:'Cabinet de recrutement',segment:'Tech, digital, sales',ville:'Paris',taille:'~ 40',site:'https://www.urbanlinker.com/',prio:'Haute',notes:''},
+  {nom:'Externatic',type:'Cabinet de recrutement',segment:'IT, cyber, data, industrie 4.0',ville:'Nantes',taille:'~ 30 (12 bureaux)',site:'https://www.externatic.fr/',prio:'Haute',notes:'Couverture nationale, grands groupes.'},
+  {nom:'Bluecoders',type:'Cabinet de recrutement',segment:'Tech & ingénierie, mid-C-level',ville:'Paris',taille:'~ 15',site:'https://www.bluecoders.com/',prio:'Haute',notes:''},
+  {nom:'Clémentine',type:'Cabinet de recrutement',segment:'Informatique & digital',ville:'Paris',taille:'PME',site:'https://www.clementine.jobs/',prio:'Haute',notes:''},
+  {nom:'digiRocks',type:'Cabinet de recrutement',segment:'Digital & IT',ville:'Paris',taille:'PME',site:'https://www.digirocks.fr/',prio:'Haute',notes:''},
+  {nom:'Licorne Society',type:'Cabinet de recrutement',segment:'Tech + business, startups',ville:'Paris',taille:'PME',site:'https://www.licornesociety.com/',prio:'Haute',notes:'Édite aussi le SaaS Leonar.'},
+  {nom:'Mobiskill',type:'Cabinet de recrutement',segment:'Développeurs & IT',ville:'Paris',taille:'PME',site:'https://www.mobiskill.fr/',prio:'Haute',notes:''},
+  {nom:'Seyos',type:'Cabinet de recrutement',segment:'Recrutement IT',ville:'Paris',taille:'PME',site:'https://www.seyos.fr/',prio:'Moyenne',notes:''},
+  {nom:'Computer Futures',type:'Cabinet de recrutement',segment:'IT spécialisé (SThree)',ville:'Paris',taille:'International',site:'https://www.computerfutures.com/fr-fr/',prio:'Moyenne',notes:''},
+  {nom:'Fed IT',type:'Cabinet de recrutement',segment:'Informatique (groupe Fed)',ville:'Paris',taille:'PME',site:'https://www.fed-it.fr/',prio:'Moyenne',notes:''},
+  {nom:'Approach People',type:'Cabinet de recrutement',segment:'Tech & multilingue',ville:'Paris',taille:'International',site:'https://www.approachpeople.com/fr/',prio:'Basse',notes:''},
+  {nom:'Flaire',type:'Recruteur indépendant',segment:'IA & data (boutique)',ville:'Paris',taille:'Petite équipe',site:'https://www.flaire.io/',prio:'Haute',notes:'Profils data/IA pointus pour scale-ups (Mistral, Dust…).'},
+  {nom:'Pachamama',type:'Recruteur indépendant',segment:'Product & sales (collectif)',ville:'Lyon',taille:'~ 18',site:'https://www.pachamama.fr/',prio:'Moyenne',notes:'Collectif de recruteurs indépendants.'},
+  {nom:'Bazylic',type:'Recruteur indépendant',segment:'Tech (boutique sur-mesure)',ville:'Paris',taille:'2 fondatrices',site:'https://www.bazylic.com/',prio:'Moyenne',notes:''},
+  {nom:'The Product Crew',type:'Recruteur indépendant',segment:'Product management (boutique)',ville:'Paris',taille:'Petite équipe',site:'https://www.theproductcrew.com/',prio:'Basse',notes:''}
+];
+
+let DATA=[], activeType='', activeType2='', currentView='home';
+
+/* ═══════════════ Persistance ═══════════════ */
+const LS_KEY='skilldeck_crm_v1', LS_SET='skilldeck_crm_settings_v1';
+function normalize(p){
+  if(!Array.isArray(p.history)) p.history=[]; if(!Array.isArray(p.tasks)) p.tasks=[];
+  if(p.relanceDate===undefined)p.relanceDate=''; if(p.owner===undefined)p.owner='';
+  ['contactNom','contactRole','contactLinkedin','email','phone','contactPhone','dealRecurrence','clientSince'].forEach(k=>{ if(p[k]===undefined)p[k]=''; });
+  if(p.dealValue===undefined)p.dealValue=0; if(p.emailGeneric===undefined)p.emailGeneric=false;
+  if(!p.dealRecurrence)p.dealRecurrence='Ponctuel';
+  return p;
+}
+// Contacts enrichis via Clay (vague 1) — fusionnés sans écraser tes saisies
+const ENRICH={
+  'Alten':{nom:'Maxime Padiolleau',role:'Business Unit Director',email:'mpadiolleau@alten.fr',linkedin:'https://www.linkedin.com/in/maxime-padiolleau-54229b50/',phone:'+33 1 46 08 70 00'},
+  'Inetum':{nom:'Emmanuel Deniaud',role:"Business Manager / Responsable d'agence",email:'emmanuel.deniaud@inetum.com',linkedin:'https://www.linkedin.com/in/emmanuel-deniaud/',phone:'+33 1 44 04 50 00'},
+  'Akkodis':{nom:'Benoît Dandine',role:'Senior Business Manager',email:'benoit.dandine@akkodis.com',linkedin:'https://www.linkedin.com/in/benoît-dandine-750baa23/',phone:''},
+  'Devoteam':{nom:'Nicolas Colomb',role:'Directeur des opérations',email:'nicolas.colomb@devoteam.com',linkedin:'https://www.linkedin.com/in/nicolas-colomb/',phone:'+33 1 41 49 48 48'},
+  'Talan':{nom:'Vianney Dalmas',role:"Directeur d'agence",email:'vianney.dalmas@talan.com',linkedin:'https://www.linkedin.com/in/vianney-dalmas-bab022153/',phone:'+33 1 42 97 96 96'},
+  'Davidson Consulting':{nom:'Marc Benoist',role:'Business Manager SI & Digital',email:'marc.benoist@davidson.fr',linkedin:'https://www.linkedin.com/in/marc-benoist-davidson/',phone:'+33 1 41 90 68 38'},
+  'Onepoint':{nom:'Serge Jacq',role:'Business Leader — communauté Atlantique',email:'s.jacq@groupeonepoint.com',linkedin:'https://www.linkedin.com/in/sergejacq/',phone:'+33 1 70 23 03 00'},
+  'Aubay':{nom:'Arnaud Fruchaud',role:'Directeur de Business Unit',email:'afruchaud@aubay.com',linkedin:'https://www.linkedin.com/in/arnaud-fruchaud-9ab34833/',phone:''},
+  'Keyrus':{nom:'Benoit Foucher',role:'Directeur des Opérations IDF',email:'benoit.foucher@keyrus.com',linkedin:'https://www.linkedin.com/in/bfoucher/',phone:''},
+  'Sii Group':{nom:'Nicolas Caprini',role:'Directeur de Business Unit',email:'nicolas.caprini@sii-group.com',linkedin:'https://www.linkedin.com/in/nicolascaprini/',phone:''},
+  'Neurones':{nom:'Luc Dondeyne',role:'Directeur des opérations',email:'luc.dondeyne@neurones.net',linkedin:'https://www.linkedin.com/in/luc-dondeyne-53b17438/',phone:''},
+  'Urban Linker':{nom:'Boris de Chalvron',role:'CEO',email:'boris@urbanlinker.com',linkedin:'https://www.linkedin.com/in/boris-de-chalvron-0b345a24/',phone:''},
+  'Externatic':{nom:'Franck Gascard',role:'CEO / Fondateur',email:'franck.gascard@externatic.fr',linkedin:'https://www.linkedin.com/in/franckgascard/',phone:''},
+  'Bluecoders':{nom:'Benjamin Di Rienzo',role:'Senior Manager Talent Acquisition',email:'benjamin.d@bluecoders.com',linkedin:'https://www.linkedin.com/in/benjamindirienzo/',phone:''},
+  'Clémentine':{nom:'Karine Musa',role:'Responsable Division IT & Digital Search',email:'',linkedin:'https://www.linkedin.com/in/karine-musa-6599651/',phone:''},
+  'Sopra Steria':{nom:'Alexandre Burlet',role:"Directeur d'agence",email:'alexandre.burlet@soprasteria.com',linkedin:'https://www.linkedin.com/in/alexandre-burlet-96859a87/',phone:''},
+  'Sogeti':{nom:'Sebastien Quintin',role:'Directeur des Opérations',email:'sebastien.quintin@capgemini.com',linkedin:'https://www.linkedin.com/in/sebastien-quintin-574a883/',phone:''},
+  'Astek':{nom:'Alexia Rodes',role:'Business Unit Director',email:'arodes@groupeastek.fr',linkedin:'https://www.linkedin.com/in/alexia-rodes-21783254/',phone:''},
+  'mc2i':{nom:'Theodore Deleplanque',role:'Senior Business Manager',email:'theodore.deleplanque@mc2i.fr',linkedin:'https://www.linkedin.com/in/theodoredeleplanqueprofil/',phone:''},
+  'Micropole':{nom:'Nathalie Le Saout',role:'Directrice des opérations',email:'nlesaout@micropole.com',linkedin:'https://www.linkedin.com/in/nathalie-le-saout-7ab364a/',phone:''},
+  'Hardis Group':{nom:'Yannick Parrain',role:'Business Unit Director – Cyber',email:'yannick.parrain@hardis-group.com',linkedin:'https://www.linkedin.com/in/yannick-parrain-08aa9140/',phone:''},
+  'SQLI':{nom:'Stéphane Escoubes',role:'Directeur des Opérations France',email:'sescoubes@sqli.com',linkedin:'https://www.linkedin.com/in/stéphane-escoubes-3b56b5/',phone:''},
+  'Ippon Technologies':{nom:'Caroline Lopes',role:'IT Business Manager',email:'clopes@ippon.tech',linkedin:'https://www.linkedin.com/in/caroline-lopes-bb67a8123/',phone:''},
+  'Zenika':{nom:'Augustin Grimprel',role:"Directeur d'agence Paris",email:'augustin.grimprel@zenika.com',linkedin:'https://www.linkedin.com/in/augustin-grimprel-89994274/',phone:''},
+  'Klanik':{nom:'Thomas Cribellier',role:"Directeur d'agence",email:'tcribellier@klanik.com',linkedin:'https://www.linkedin.com/in/thomas-cribellier-1905a970/',phone:''},
+  'Niji':{nom:'Marc Pocher',role:'Directeur des Opérations / Directeur BU',email:'marc.pocher@niji.fr',linkedin:'https://www.linkedin.com/in/marc-pocher-49100b54/',phone:''},
+  'Smile':{nom:'Adrien Morosi',role:'Directeur BU Expertise / Business Manager',email:'adrien.morosi@smile.fr',linkedin:'https://www.linkedin.com/in/adrien-morosi-informatique-recrutement/',phone:''},
+  'Infotel':{nom:'Jessy Aipert',role:'BU Director / Sales & Operations',email:'jessy.aipert@infotel.com',linkedin:'https://www.linkedin.com/in/jessy-aipert-b3223287/',phone:''},
+  'Mobiskill':{nom:'Mathieu Libessart',role:'Managing Director Mobiskill',email:'mathieu.libessart@mobiskill.fr',linkedin:'https://www.linkedin.com/in/mathieulibessart/',phone:''},
+  'Seyos':{nom:'Brice Aubert',role:'Dirigeant / Directeur commercial',email:'brice@seyos.fr',linkedin:'https://www.linkedin.com/in/briceaubert/',phone:''},
+  'Bazylic':{nom:'Amandine Dazy',role:'Fondatrice & Co-gérante',email:'amandine@bazylic.com',linkedin:'https://www.linkedin.com/in/amandine-dazy-38a62898/',phone:''},
+  'Younup':{nom:'Charles Nobiron',role:'Directeur commercial - Associé',email:'c.nobiron@younup.fr',linkedin:'https://www.linkedin.com/in/charles-nobiron-6816ab22/',phone:''},
+  'Sfeir':{nom:'Arnaud Waller',role:'Managing Director France',email:'waller.a@sfeir.com',linkedin:'https://www.linkedin.com/in/arnaud-waller-3ab61811/',phone:''},
+  'Kaliop':{nom:'Alexis Trancart',role:'Directeur associé',email:'atrancart@kaliop.com',linkedin:'https://www.linkedin.com/in/alexis-trancart-6a8a8a18/',phone:''},
+  'Theodo':{nom:'Noemie Parker',role:'CEO Theodo France',email:'noemiep@theodo.fr',linkedin:'https://www.linkedin.com/in/noemie-parker-1387868b/',phone:''},
+  'Adservio':{nom:'Jaâfar Mehhane',role:'Directeur Commercial Groupe',email:'jaafar.mehhane@adservio.fr',linkedin:'https://www.linkedin.com/in/jaâfar-mehhane-71b14732/',phone:''},
+  'Norsys':{nom:'Denis Cassoret',role:"Directeur d'Agence",email:'dcassoret@norsys.fr',linkedin:'https://www.linkedin.com/in/denis-cassoret-3b0888/',phone:''},
+  'Scalian':{nom:'Anne Bonnart',role:'Senior Business Manager',email:'anne.bonnart@scalian.com',linkedin:'https://www.linkedin.com/in/anne-bonnart-4b514161/',phone:''},
+  'ELCA':{nom:'Olivier Trinh',role:'VP Sales / Head of Business Line',email:'olivier.trinh@elca.ch',linkedin:'https://www.linkedin.com/in/oliviertrinh/',phone:''},
+  'Liip':{nom:'Thomas Botton',role:'Client Partner / Co-Lead Business Development',email:'thomas.botton@liip.ch',linkedin:'https://www.linkedin.com/in/thomas-botton/',phone:''},
+  'Ekino':{nom:'Sébastien Collery',role:'Directeur Agence ekino Bordeaux',email:'',linkedin:'https://www.linkedin.com/in/sébastien-collery-4a986988/',phone:''},
+  'Avisia':{nom:'Anne Omont',role:'Directrice des Régions',email:'aomont@avisia.fr',linkedin:'https://www.linkedin.com/in/anne-omont-534ba377/',phone:''},
+  'VISEO':{nom:'Charles Muselli',role:'Directeur BU Digital & AI - Lyon',email:'charles.muselli@viseo.com',linkedin:'https://www.linkedin.com/in/charles-muselli/',phone:''},
+  'Netcetera':{nom:'Markus Dietrich',role:'Head Sales & Client Relations',email:'markus.dietrich@netcetera.com',linkedin:'https://www.linkedin.com/in/markus-dietrich-07782a5/',phone:''},
+  "INOP'S":{nom:"Sullivan Rielland",role:"Business Manager",email:"srielland@inops.fr",linkedin:"https://www.linkedin.com/in/sullivan-rielland",phone:"",cphone:"",site:"https://www.inops.fr/",ville:"Puteaux"},
+  "Faceel-it":{nom:"Stéphanie Demarez",role:"Senior Business Manager",email:"s.demarez@faceel-it.com",linkedin:"https://www.linkedin.com/in/stephanie-labbe",phone:"",cphone:"+33 7 87 68 12 80",site:"https://www.faceel-it.com/",ville:"Wasquehal"},
+  "l'Oiseau Rare":{nom:"Enzo Mori",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/enzo-mori",phone:"",cphone:"+33 6 22 73 19 51"},
+  "Consult IT":{nom:"Hiba Rafik",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/hiba-rafik-245076167",phone:"",cphone:""},
+  "DatalakeGroup":{nom:"Hanene Baratli",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/hanene-baratli-6b5b1a177",phone:"",cphone:"+33 6 62 90 47 01"},
+  "Daveo":{nom:"Giresse Cabrel Fonkeu",role:"Business Manager",email:"giresse.fonkeu@daveo.fr",linkedin:"https://www.linkedin.com/in/giresse-cabrel-fonkeu-commercial",phone:"",cphone:"+33 6 66 62 13 89",site:"https://www.daveo.fr/",ville:"Paris"},
+  "engIT":{nom:"Benjamin Arosteguy",role:"Senior Business Manager",email:"barosteguy@engit.fr",linkedin:"https://www.linkedin.com/in/benjamin-arosteguy-1ab57491",phone:"",cphone:"+33 6 67 41 86 53",site:"https://www.engit.fr/",ville:"Sophia Antipolis"},
+  "NUMERYX":{nom:"Arnaud Lacroix",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/arnaud-lacroix-b66169169",phone:"",cphone:"+33 6 27 28 28 05",site:"https://www.numeryx.fr/",ville:"Meudon"},
+  "T&T Consulting SAS":{nom:"Cyprien Yang",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/cyprien-yang-b7aa4b69",phone:"",cphone:""},
+  "HARA Consulting":{nom:"Joanna Labadie Spengler",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/joanna-labadie-spengler-533023178",phone:"",cphone:""},
+  "ONECORP":{nom:"Mélanie Estève",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/mélanie-estève",phone:"",cphone:"+33 6 18 76 50 25"},
+  "AMAYAS Consulting":{nom:"Fatih Bayram",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/bayramfatih",phone:"",cphone:"+33 6 24 82 56 29"},
+  "Green-SI by PROXIAD":{nom:"Aurélie Dauchez",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/aurélie-dauchez",phone:"",cphone:"+33 6 50 85 00 75"},
+  "Amontech (groupe Artemys)":{nom:"Selim Ghlis",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/selim-ghlis-0237099b",phone:"",cphone:"+33 6 12 13 35 68"},
+  "SERVICIT":{nom:"Adam Mechakra",role:"Business Manager",email:"amechakra@servicit.fr",linkedin:"https://www.linkedin.com/in/adam-mechakra",phone:"",cphone:"+33 6 56 67 10 01",site:"https://www.servicit.fr/",ville:"Paris"},
+  "Reisel":{nom:"Gabin Roux",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/gabin-roux-8b0690262",phone:"",cphone:""},
+  "HUdata":{nom:"Safia Dekkiche",role:"Business Manager",email:"sdekkiche@hudata.fr",linkedin:"https://www.linkedin.com/in/safia-dekkiche",phone:"",cphone:"",site:"https://www.hudata.fr/",ville:"Paris"},
+  "Dauphine Group":{nom:"Hedi Trifa",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/hedi-trifa-a18992232",phone:"",cphone:""},
+  "Clevermind":{nom:"Sofiane Berkemal",role:"Business Manager",email:"sofiane.berkemal@clevermind.fr",linkedin:"https://www.linkedin.com/in/sofiane-berkemal-b54baba3",phone:"",cphone:"",site:"https://clevermind.fr/",ville:"Neuilly-sur-Seine"},
+  "Aneo":{nom:"Anaïs Gueye",role:"Business Manager",email:"agueye@aneo.fr",linkedin:"https://www.linkedin.com/in/anaïs-gueye",phone:"",cphone:"",site:"https://www.aneo.eu/",ville:"Boulogne-Billancourt"},
+  "SHARP BUSINESS SYSTEMS FRANCE":{nom:"Tom Bonnardel",role:"Senior Business Manager",email:"",linkedin:"https://www.linkedin.com/in/tom-bonnardel-responsablecommercial",phone:"",cphone:""},
+  "ACT-ON TECHNOLOGY":{nom:"Vincent François",role:"Senior Business Manager",email:"",linkedin:"https://www.linkedin.com/in/vincent-françois-174729141",phone:"",cphone:""},
+  "Groupe Havana":{nom:"Lucas Ferrucci",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/lucas-ferrucci-27361b146",phone:"",cphone:""},
+  "SIJO":{nom:"Elona Hattab",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/elona-hattab-ab08131a1",phone:"",cphone:""},
+  "ISALYS AUGMENTED MANAGEMENT":{nom:"Victor Chmura",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/victor-chmura-29589a26b",phone:"",cphone:""},
+  "Spark-it":{nom:"Hicham Sbaghi",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/hicham-sbaghi-735bbb85",phone:"",cphone:""},
+  "Osmose":{nom:"Nina Maton",role:"Branch Manager",email:"",linkedin:"https://www.linkedin.com/in/nina-maton-431168114",phone:"",cphone:"+33 6 46 42 52 11"},
+  "Size Up Consulting":{nom:"Yasmine Lebbaz",role:"Branch Manager",email:"yasmine.lebbaz@size-up-consulting.com",linkedin:"https://www.linkedin.com/in/yasminelebbaz",phone:"",cphone:"+33 6 85 04 92 30",site:"https://www.size-up-consulting.com/",ville:"Paris"},
+  "AOSIS":{nom:"Sabrina Macaire Bougle",role:"Branch Director",email:"sabrina.macaire@aosis.net",linkedin:"https://www.linkedin.com/in/sabrina-macaire-bougle",phone:"",cphone:"+33 6 64 49 79 81",site:"https://www.aosis.net/",ville:"Toulouse"},
+  "Apogea":{nom:"Sébastien Desnoues",role:"Director of Business Unit",email:"s.desnoues@apogea.net",linkedin:"https://www.linkedin.com/in/sébastien-desnoues-8a766110b",phone:"",cphone:"+33 6 04 63 91 74",site:"https://www.apogea.fr/",ville:"Levallois-Perret"},
+  "OPEN":{nom:"Philippe Sauvage",role:"Director of Business Unit",email:"",linkedin:"https://www.linkedin.com/in/philippe-sauvage",phone:"",cphone:""},
+  "PIMAN Digital Partners":{nom:"Jonathan Sokpo",role:"Business Unit Manager",email:"",linkedin:"https://www.linkedin.com/in/jonathan-sokpo-a7439143",phone:"",cphone:"+33 6 08 46 83 34"},
+  "ATEXIS":{nom:"Roxane Broutot",role:"Business Unit Manager",email:"",linkedin:"https://www.linkedin.com/in/roxane-broutot",phone:"",cphone:""},
+  "Ripple Motion Services":{nom:"Elise Lenoir",role:"Director of Consulting",email:"",linkedin:"https://www.linkedin.com/in/elise-lenoir-487a739b",phone:"",cphone:"+33 6 81 67 40 30"},
+  "Asenium Consulting":{nom:"Paul Moger",role:"Business Unit Director",email:"",linkedin:"https://www.linkedin.com/in/paulmoger",phone:"",cphone:"+33 6 25 49 01 91"},
+  "PREREQUIS":{nom:"Didier Leymarie",role:"Associate Director",email:"",linkedin:"https://www.linkedin.com/in/didier-leymarie-b5193292",phone:"",cphone:"+33 6 64 04 05 47"},
+  "Bloomco":{nom:"Driss Boucherit",role:"Business Unit Manager",email:"",linkedin:"https://www.linkedin.com/in/driss-boucherit-71b450107",phone:"",cphone:"+33 6 98 35 52 01"},
+  "Akor Consulting":{nom:"Manon Marechal Lyet",role:"Business Unit Manager",email:"",linkedin:"https://www.linkedin.com/in/manon-marechal-lyet-💚-ba73bb32",phone:"",cphone:"+33 6 12 15 42 79"},
+  "A5sys":{nom:"Malek Mechter",role:"Director of Consulting",email:"",linkedin:"https://www.linkedin.com/in/malek-mechter-6965824a",phone:"",cphone:""},
+  "Beelix":{nom:"Thomas Morgens",role:"Branch Manager",email:"",linkedin:"https://www.linkedin.com/in/thomas-morgens-b90315159",phone:"",cphone:"+33 6 66 85 84 00"},
+  "AEZAN":{nom:"Julien Le Bihan",role:"Business Unit Manager",email:"",linkedin:"https://www.linkedin.com/in/julien-lebihan",phone:"",cphone:"+33 6 77 20 72 22"},
+  "TRIGONE (part of the NRB Group)":{nom:"William Causse",role:"Key Account Manager",email:"",linkedin:"https://www.linkedin.com/in/william-causse",phone:"",cphone:"+33 6 09 78 46 28"},
+  "SOFTEAM Expertise Data & IA":{nom:"Sodki Abdmouleh",role:"Manager",email:"",linkedin:"https://www.linkedin.com/in/sodki-abdmouleh-32358762",phone:"",cphone:"+33 6 29 65 08 51"},
+  "ConvictionsRH":{nom:"Florence Provost",role:"Manager",email:"",linkedin:"https://www.linkedin.com/in/florence-provost-43929b145",phone:"",cphone:"+33 6 30 08 21 71"},
+  "Weliom":{nom:"Sandrine Lartigau",role:"Manager",email:"",linkedin:"https://www.linkedin.com/in/sandrinelartigau",phone:"",cphone:"+33 6 68 33 79 02"},
+  "KaOra Partners":{nom:"Maxime Gonzatto",role:"Manager",email:"",linkedin:"https://www.linkedin.com/in/maxime-gonzatto-888519a4",phone:"",cphone:"+33 6 03 11 17 21"},
+  "CITECH":{nom:"Nathan Meunier",role:"Account Manager",email:"",linkedin:"https://www.linkedin.com/in/nathan-meunier-b43312228",phone:"",cphone:"+33 7 44 40 19 56"},
+  "Accretio":{nom:"Hugues Treiber",role:"Manager",email:"",linkedin:"https://www.linkedin.com/in/hugues-treiber-6875681a5",phone:"",cphone:"+33 6 22 54 35 35"},
+  "Key Performance Consulting (KPC)":{nom:"Julien Jouclard",role:"Manager",email:"",linkedin:"https://www.linkedin.com/in/julien-jouclard-55172271",phone:"",cphone:"+33 7 86 11 89 39"},
+  "Business At Work":{nom:"Gérard Kardesch",role:"Account Manager",email:"",linkedin:"https://www.linkedin.com/in/gérard-kardesch-03810a2a6",phone:"",cphone:"+33 6 30 33 55 54"},
+  "Artimon":{nom:"Claire Sevec",role:"Manager",email:"",linkedin:"https://www.linkedin.com/in/claire-sevec-33986864",phone:"",cphone:""},
+  "ADVENTS":{nom:"Barbara Causse",role:"Manager",email:"",linkedin:"https://www.linkedin.com/in/barbara-causse-b0250610",phone:"",cphone:"+33 6 37 17 79 21"},
+  "Valeuriad":{nom:"Tristan Nicolas",role:"Account Manager",email:"",linkedin:"https://www.linkedin.com/in/tristan-nicolas-3883aab7",phone:"",cphone:"+33 6 48 31 77 94"},
+  "KYU":{nom:"Arnaud Guinois",role:"Manager",email:"",linkedin:"https://www.linkedin.com/in/arnaud-guinois-864aa0a3",phone:"",cphone:"+33 6 26 45 68 00"},
+  "Clever Cloud":{nom:"Fabrice Bonneau",role:"Account Manager",email:"",linkedin:"https://www.linkedin.com/in/fabrice-bonneau-38214414a",phone:"",cphone:"+33 6 86 07 19 87"},
+  "Twelve Consulting":{nom:"Marilyn Padonou",role:"Manager",email:"",linkedin:"https://www.linkedin.com/in/marilyn-padonou",phone:"",cphone:""},
+  "BIAL-X":{nom:"Philippe De Durat",role:"Branch Manager",email:"",linkedin:"https://www.linkedin.com/in/philippe-de-durat-6865a79",phone:"",cphone:"+33 6 12 42 02 77"},
+  "Direction du numérique des Ministères Sociaux":{nom:"Gautier Martin",role:"Partnerships Manager",email:"",linkedin:"https://www.linkedin.com/in/martingautier",phone:"",cphone:"+33 6 29 16 38 80"},
+  "ALTHEA":{nom:"Paul Bruno",role:"Manager",email:"",linkedin:"https://www.linkedin.com/in/paul-bruno-075519147",phone:"",cphone:"+33 6 19 93 42 98"},
+  "LeHibou":{nom:"Antoine Barbier De Chalais",role:"Regional Manager",email:"",linkedin:"https://www.linkedin.com/in/antoine-barbier-de-chalais",phone:"",cphone:"+33 6 63 73 96 45"},
+  "Attineos Applications":{nom:"Ludivine Lemonnier",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/ludivine-lemonnier",phone:"",cphone:"+33 7 66 03 10 07"},
+  "Younited":{nom:"Joelle Tuch",role:"Senior Sales Enterprise Strategic Account Executive",email:"",linkedin:"https://www.linkedin.com/in/joelletuch",phone:"",cphone:"+1 929-235-3425"},
+  "ALTICAP":{nom:"Alice Leneveu",role:"Business Decision Consultant",email:"",linkedin:"https://www.linkedin.com/in/alice-leneveu-57aa06169",phone:"",cphone:""},
+  "ON-X Groupe":{nom:"Coralie Mas",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/coralie-mas-09b33b29",phone:"",cphone:"+33 6 68 17 37 59"},
+  "ScaleSquad":{nom:"Louis Delin",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/louis-delin-90ab17195",phone:"",cphone:"+33 7 70 25 38 75"},
+  "Avaliance France":{nom:"Fryda Fegali",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/fryda-fegali-bbb0a32bb",phone:"",cphone:"+33 6 17 07 92 54"},
+  "HR Team Group":{nom:"Luca Vassort",role:"Business Developer",email:"",linkedin:"https://www.linkedin.com/in/luca-vassort-739a04159",phone:"",cphone:"+33 6 99 94 18 34"},
+  "LIPTON FIT":{nom:"Cathy Laurent",role:"Associate Manager",email:"",linkedin:"https://www.linkedin.com/in/cathy-laurent-1727b843",phone:"",cphone:"+33 6 11 65 42 56"},
+  "OLCYA":{nom:"Emeric Simon Hose",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/emeric-simon-hose-8702a314",phone:"",cphone:"+33 6 62 67 17 20"},
+  "alpha micro":{nom:"Corentin Pele",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/corentin-pele",phone:"",cphone:"+33 6 71 86 71 26"},
+  "iNet Process":{nom:"Arsene Bodereau",role:"Account Executive",email:"",linkedin:"https://www.linkedin.com/in/arsène-b-8234a1141",phone:"",cphone:"+33 6 71 46 80 99"},
+  "Banque Populaire Auvergne Rhône Alpes":{nom:"Edwige Koncewiez",role:"Enterprise Market Manager",email:"",linkedin:"https://www.linkedin.com/in/edwige-koncewiez-5a9157293",phone:"",cphone:""},
+  "NXO Telecom":{nom:"Rabah Zellagui",role:"Pre-Sales Consultant",email:"",linkedin:"https://www.linkedin.com/in/rabah-zellagui-32423416",phone:"",cphone:"+33 6 82 56 62 26"},
+  "Inten-FR":{nom:"Nicolas Massicot",role:"Project Manager, Sage Consultant",email:"",linkedin:"https://www.linkedin.com/in/nicolas-massicot-61726aa0",phone:"",cphone:""},
+  "Artik Consulting":{nom:"Thanina Mechouk",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/thanina-mechouk-245577b3",phone:"",cphone:"+33 6 25 72 04 82"},
+  "NATAN":{nom:"Erwan Ulrich",role:"Technical Account and Business Manager",email:"",linkedin:"https://www.linkedin.com/in/erwan-ulrich",phone:"",cphone:""},
+  "Cowigo":{nom:"Allan Yasar Ghirelli",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/allan-yasar-ghirelli-2752b1108",phone:"",cphone:"+33 6 35 50 00 14"},
+  "Anywr":{nom:"Cassandre Blt",role:"Business Engineer",email:"",linkedin:"https://www.linkedin.com/in/cassandre-b-a79165211",phone:"",cphone:""},
+  "ROXYS":{nom:"Benoit Patoux",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/bpatoux",phone:"",cphone:"+33 6 10 96 84 00"},
+  "SIKIA":{nom:"Bastien Jeanblanc",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/bastien-jeanblanc",phone:"",cphone:""},
+  "Societe Generale Private Banking - SGPB":{nom:"Gianni Passeo",role:"Business Development",email:"",linkedin:"https://www.linkedin.com/in/gianni-passeo",phone:"",cphone:""},
+  "ASPAWAY":{nom:"Jérôme Soares",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/jérôme-soares-64b272124",phone:"",cphone:""},
+  "AntemetA":{nom:"Jean Marc Delbosc",role:"Pre-Sales Architect",email:"",linkedin:"https://www.linkedin.com/in/jean-marc-delbosc",phone:"",cphone:"+33 6 14 79 31 96"},
+  "VO2 GROUP":{nom:"Philippine Ramaherison",role:"Back-End Developer",email:"",linkedin:"https://www.linkedin.com/in/philippine-ramaherison-33b089a7",phone:"",cphone:"+33 6 99 41 81 47"},
+  "Compagnie Francaise Informatique":{nom:"Saif Ben Abid",role:"Pre-Sales Architect",email:"",linkedin:"https://www.linkedin.com/in/saif-ben-abid-72528845",phone:"",cphone:""},
+  "SISTEMA STRATEGY":{nom:"Ahmad Houda",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/ahmad-houda-ab4524200",phone:"",cphone:"+33 6 18 70 51 32"},
+  "Qwerio":{nom:"Mathieu Tofili",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/mathieu-tofili",phone:"",cphone:"+33 6 31 13 83 20"},
+  "WINTEK":{nom:"Sawssin Nouri",role:"Business Developer",email:"",linkedin:"https://www.linkedin.com/in/sawssin-nouri-b8b97a168",phone:"",cphone:"+33 6 05 50 55 65"},
+  "ADVANCED Schema":{nom:"Jérémy Verdavoir",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/jérémy-verdavoir-937b28116",phone:"",cphone:"+33 6 67 42 94 74"},
+  "LittleBigCode":{nom:"Melissa Cherfa",role:"Director of Talent Consulting, Data and AI",email:"",linkedin:"https://www.linkedin.com/in/cherfamelissa",phone:"",cphone:""},
+  "Mister IA":{nom:"Élise Soulier",role:"Consultant Manager",email:"",linkedin:"https://www.linkedin.com/in/élise-soulier-7228b5222",phone:"",cphone:"+33 6 52 06 51 46"},
+  "Groupama d'Oc":{nom:"Rachel Parlant Vabre",role:"Commercial Advisor to Professionals",email:"",linkedin:"https://www.linkedin.com/in/rachel-parlant-465543140",phone:"",cphone:""},
+  "SensioLabs":{nom:"Sara Brown",role:"Senior Business Developer",email:"",linkedin:"https://www.linkedin.com/in/sara-brown-0b7930a6",phone:"",cphone:""},
+  "Teolia":{nom:"Sylvain Mussard",role:"Business Developer",email:"",linkedin:"https://www.linkedin.com/in/sylvain-mussard-a52372149",phone:"",cphone:"+33 6 42 42 40 57"},
+  "AgoraVita":{nom:"Thomas Martin",role:"Network and Systems Expert",email:"",linkedin:"https://www.linkedin.com/in/thomas-martin-032ba37b",phone:"",cphone:"+33 6 46 14 06 45"},
+  "Kelerian Group":{nom:"Tom Fréneaux",role:"Performance Management Consultant",email:"",linkedin:"https://www.linkedin.com/in/tom-freneaux",phone:"",cphone:"+33 6 27 59 45 53"},
+  "Thiga":{nom:"Nicolas Langin",role:"Senior Product Designer",email:"",linkedin:"https://www.linkedin.com/in/nicolas-langin",phone:"",cphone:""},
+  "Tersedia":{nom:"Sebastien Winiarz",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/sebastien-winiarz-49831069",phone:"",cphone:"+33 6 89 98 95 55"},
+  "DEVOLIS":{nom:"Wilfrid Le Pape",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/wilfrid-le-pape-10921986",phone:"",cphone:"+33 6 24 49 03 08"},
+  "EASYDESK":{nom:"Valère Charvet",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/valère-c-9bb996134",phone:"",cphone:"+33 6 78 85 66 18"},
+  "Sofinco S.A.":{nom:"Chantal Ledeme",role:"Head of Sales and Key Accounts",email:"",linkedin:"https://www.linkedin.com/in/chantal-ledeme-44a3ab49",phone:"",cphone:"+33 6 07 71 40 24"},
+  "Maten":{nom:"Fatima Mahcene",role:"Business Developer",email:"",linkedin:"https://www.linkedin.com/in/fatima-mahcene-677847296",phone:"",cphone:""},
+  "Well'd":{nom:"Chaimaa Loudagh",role:"Business Engineer",email:"",linkedin:"https://www.linkedin.com/in/chaimaa-loudagh-319030192",phone:"",cphone:""},
+  "GIANT Consulting 🌐":{nom:"Théo Sefrani",role:"Business Developer",email:"",linkedin:"https://www.linkedin.com/in/théo-sefrani-190562283",phone:"",cphone:""},
+  "AUTHENTIC Group":{nom:"Frédéric Dubus",role:"Business Consultant",email:"",linkedin:"https://www.linkedin.com/in/frédéric-dubus-13a990121",phone:"",cphone:"+33 6 38 39 15 78"},
+  "INVIVOO":{nom:"Johann Pagès",role:"Business Developer",email:"",linkedin:"https://www.linkedin.com/in/johann-pagès-bb1564224",phone:"",cphone:"+33 7 60 41 74 00"},
+  "Augusta Reeves - SAP Global Partner":{nom:"Frédéri Lafran",role:"Director of Agency",email:"",linkedin:"https://www.linkedin.com/in/lafran",phone:"",cphone:"+33 6 64 95 02 70"},
+  "Baker Tilly France":{nom:"Lisa Boussemart",role:"Head of Sales Efficiency and SDR",email:"",linkedin:"https://www.linkedin.com/in/lisa-boussemart-",phone:"",cphone:""},
+  "SECURINFOR":{nom:"Patrice Leclercq",role:"Strategic Key Account Business Partner",email:"",linkedin:"https://www.linkedin.com/in/patrice-leclercq-9944621a",phone:"",cphone:"+33 6 82 22 98 70"},
+  "Cyllene":{nom:"Gautier Bongras",role:"Business Developer",email:"",linkedin:"https://www.linkedin.com/in/gautierbongras",phone:"",cphone:"+33 7 82 93 07 75"},
+  "Athéo Ingénierie":{nom:"Axel Debreuille",role:"Business Development Representative",email:"",linkedin:"https://www.linkedin.com/in/axel-debreuille-1970b5264",phone:"",cphone:"+33 6 66 08 45 92"},
+  "CODiLOG":{nom:"Damien Martineau",role:"Offer Manager",email:"",linkedin:"https://www.linkedin.com/in/damien-martineau-9b351b2",phone:"",cphone:"+33 6 03 10 50 26"},
+  "GroupeFBO":{nom:"Dillan Coquelle",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/dillan-coquelle",phone:"",cphone:""},
+  "Groupe Avanista":{nom:"Agnès Bossuyt",role:"Business Developer",email:"",linkedin:"https://www.linkedin.com/in/agnès-bossuyt-42527b1a",phone:"",cphone:"+33 6 14 21 21 39"},
+  "Anacau":{nom:"Yousra Chiadmi",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/yousra-chiadmi-69b1871a2",phone:"",cphone:""},
+  "BeMSP":{nom:"Olivier Conte",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/olivier-conte-a6385b30",phone:"",cphone:"+33 6 64 57 33 12"},
+  "NEWTEAM CONSULTING":{nom:"Kamil Boudad",role:"Business Developer",email:"",linkedin:"https://www.linkedin.com/in/kamil-boudad",phone:"",cphone:""},
+  "RS2i":{nom:"Joe Souaid",role:"Consultant, Business Process Management",email:"",linkedin:"https://www.linkedin.com/in/joe-souaid-686385174",phone:"",cphone:""},
+  "Kaizzen":{nom:"Boris Badens",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/boris-badens-73589b116",phone:"",cphone:"+33 6 71 69 71 53"},
+  "ERICA Informatique":{nom:"Stéphanie Faure",role:"Consultant and Project Manager",email:"",linkedin:"https://www.linkedin.com/in/stephanie-faure-consultant-sage",phone:"",cphone:"+33 6 70 01 43 50"},
+  "COOPERTEAM":{nom:"Ayné Didier",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/didier-ayné-75191414",phone:"",cphone:"+33 6 76 21 77 02"},
+  "FINELOG-BISEUM":{nom:"Boubkeur Boudaoud",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/boubkeur-boudaoud-2a87ab44",phone:"",cphone:"+33 6 26 77 02 82"},
+  "Crédit Agricole Pyrénées Gascogne":{nom:"Damien Coyos",role:"Business Development Manager",email:"",linkedin:"https://www.linkedin.com/in/damien-coyos-188b88142",phone:"",cphone:""},
+  "DataValue Strategy":{nom:"Asma Boukhouf",role:"Managing Consultant",email:"",linkedin:"https://www.linkedin.com/in/asma-boukhouf-42a659b5",phone:"",cphone:"+33 6 95 05 09 91"},
+  "DATAHORIZON":{nom:"Touili Maissa",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/maissa-touili",phone:"",cphone:""},
+  "Intrabases":{nom:"Laurent Alloncle",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/laurent-alloncle-b2a10394",phone:"",cphone:"+33 6 03 01 65 82"},
+  "Jamespot":{nom:"Julie Petignat",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/julie-petignat-a638377",phone:"",cphone:"+33 6 62 73 42 54"},
+  "ABSYS CYBORG":{nom:"Anne-France Grux - D’Esquerre",role:"Business Developer",email:"",linkedin:"https://www.linkedin.com/in/annefrancedesquerre",phone:"",cphone:"+33 7 63 73 60 70"},
+  "OJC Conseil":{nom:"Eric Josse",role:"Business Consultant",email:"",linkedin:"https://www.linkedin.com/in/eric-josse-2123b5b",phone:"",cphone:"+33 6 21 31 23 65"},
+  "Technomade":{nom:"Jérémy Fournier",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/jérémy-fournier-140162100",phone:"",cphone:"+33 6 72 48 39 40"},
+  "Cyrias":{nom:"Yassine Tahiri",role:"Consultant, Solutions and Business Transformation",email:"",linkedin:"https://www.linkedin.com/in/yassine-tahiri-b72545106",phone:"",cphone:"+33 6 26 94 51 15"},
+  "PROLOGISM":{nom:"Gabriel Manche",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/gabriel-manche-4ba862a8",phone:"",cphone:"+33 6 17 95 08 50"},
+  "Phenisys":{nom:"Vincent Le Bris",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/vincent-le-bris1",phone:"",cphone:"+33 6 82 42 36 77"},
+  "Neos-SDI":{nom:"Herve Guezennec",role:"Director of Solutions and Ecosystem",email:"",linkedin:"https://www.linkedin.com/in/herveguezennec",phone:"",cphone:"+33 6 64 40 49 42"},
+  "Clay Group":{nom:"Tiffany Laurin",role:"Associate Director",email:"",linkedin:"https://www.linkedin.com/in/tiffany-laurin",phone:"",cphone:"+33 6 09 46 70 87"},
+  "Silkhom | LUNOPA Group":{nom:"Jules Bertrand",role:"Freelance Market Manager",email:"",linkedin:"https://www.linkedin.com/in/bertrand-jules",phone:"",cphone:"+33 7 64 62 73 26"},
+  "VPWhite":{nom:"Tom Bourgeois",role:"Business Developer",email:"",linkedin:"https://www.linkedin.com/in/tom-bourgeois-a12221220",phone:"",cphone:"+33 6 22 94 01 29"},
+  "Alteca":{nom:"Clément Donio",role:"Business Developer",email:"",linkedin:"https://www.linkedin.com/in/clement-donio",phone:"",cphone:""},
+  "Opteamis":{nom:"Robinson Teral",role:"Business Engineer",email:"",linkedin:"https://www.linkedin.com/in/robinson-teral",phone:"",cphone:"+33 6 95 84 59 05"},
+  "AS International Group":{nom:"Sihem Berriri",role:"Business Developer",email:"",linkedin:"https://www.linkedin.com/in/sihem-berriri-446623154",phone:"",cphone:"+971 52 928 5094"},
+  "Monabanq":{nom:"Meriem Adjou",role:"Business Development Advisor",email:"",linkedin:"https://www.linkedin.com/in/meriem-adjou-a42329184",phone:"",cphone:""},
+  "Cloud Temple":{nom:"Léa Terrier",role:"Business Developer",email:"",linkedin:"https://www.linkedin.com/in/lea-terrier-alternance-lyon-commerciale-",phone:"",cphone:"+33 7 82 29 09 34"},
+  "AYLI CONSULTING":{nom:"Anass Harrak",role:"Business Development Consultant",email:"",linkedin:"https://www.linkedin.com/in/anass-harrak-59993b234",phone:"",cphone:"+33 6 13 97 44 04"},
+  "Blue Soft Consulting (ex-Daylight)":{nom:"Yves Eberschweiler",role:"Account Director",email:"",linkedin:"https://www.linkedin.com/in/yveseberschweiler",phone:"",cphone:"+33 6 13 66 98 76"},
+  "Feneex IT":{nom:"Nail Touati",role:"Business Unit Manager",email:"",linkedin:"https://www.linkedin.com/in/nail-touati-94155410b",phone:"",cphone:""},
+  "Aceo Tech":{nom:"Mathieu D'Hondt",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/mathieu-d-hondt",phone:"",cphone:"+33 6 29 47 06 44"},
+  "Onefirst":{nom:"Julia Gervais",role:"Business Manager",email:"",linkedin:"https://www.linkedin.com/in/julia-gervais-71b694106",phone:"",cphone:"+33 6 59 90 91 60"},
+  "FEKRA GROUP":{nom:"Sébastien Minotti",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/seb-m-673729430",phone:"",cphone:"+33 6 98 91 00 58"},
+  "ITEC":{nom:"Elisa Zemmal",role:"Strategy Consultant",email:"",linkedin:"https://www.linkedin.com/in/elisa-zemmal",phone:"",cphone:"+33 6 28 93 13 04"},
+  "Ovalo CX":{nom:"Stephane Schoder",role:"Director of Business Consulting",email:"",linkedin:"https://www.linkedin.com/in/stephane-schoder-744ab54",phone:"",cphone:"+33 6 75 96 71 31"},
+  "GLOBAL PARTNER":{nom:"Amel Kemmoun",role:"Business Engineer",email:"",linkedin:"https://www.linkedin.com/in/amel-kemmoun-94906b93",phone:"",cphone:""},
+  "Lucem":{nom:"Céline Stengel",role:"Director of Business Unit",email:"",linkedin:"https://www.linkedin.com/in/céline-s-21b9a613",phone:"",cphone:"+33 6 98 44 17 85"},
+  "Consort":{nom:"Nora Zemma",role:"",email:"",linkedin:"",phone:"",cphone:"+33 6 85 68 91 35"},
+  "IT Systemes":{nom:"Bouzaida Sofiene",role:"Director of Nearshore Sales",email:"",linkedin:"https://www.linkedin.com/in/sofiene-bouzaida-5323621b7",phone:"",cphone:""},
+  "Audensiel":{nom:"Maxime Requin",role:"Regional Director, Business Unit Manager",email:"",linkedin:"https://www.linkedin.com/in/maximerequin",phone:"",cphone:""},
+  "Easis Consulting":{nom:"Sonia Chevalier",role:"Senior Consultant",email:"",linkedin:"https://www.linkedin.com/in/sonia-chevalier-strategie",phone:"",cphone:"+33 6 09 81 22 30"},
+  "MARCEA Conseil":{nom:"Julien Hillion",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/julien-hillion-4a399266",phone:"",cphone:"+33 6 31 64 73 85"},
+  "W hub":{nom:"Hugo Salvat",role:"Business Developer",email:"",linkedin:"https://www.linkedin.com/in/hugo-salvat-89b241171",phone:"",cphone:""},
+  "MTI France SAS":{nom:"Djimmy Messous",role:"Consultant Professional Services",email:"",linkedin:"https://www.linkedin.com/in/djimmy-messous-b4b6931a7",phone:"",cphone:"+33 6 76 86 51 08"},
+  "ETIXWAY":{nom:"Rachid Jdidi",role:"Business Partner",email:"",linkedin:"https://www.linkedin.com/in/syligre",phone:"",cphone:"+212 661-304530"},
+  "Oney":{nom:"Simon Mahieu",role:"Head of Sales and Business Development",email:"",linkedin:"https://www.linkedin.com/in/simon-mahieu1",phone:"",cphone:"+33 6 62 29 57 68"},
+  "BK Solutions | Expert SAP S/4 HANA et CEGID XRP Ultimate":{nom:"Pascal Dubernet",role:"Senior Manager",email:"",linkedin:"https://www.linkedin.com/in/pascal-dubernet",phone:"",cphone:"+33 6 63 82 80 01"},
+  "Hibyrd":{nom:"Frédéric Gachet",role:"Business Partner",email:"",linkedin:"https://www.linkedin.com/in/fredgachet",phone:"",cphone:"+33 6 73 45 91 26"},
+  "Odyssée Conseil":{nom:"Charly Pierre",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/charly-pierre-2396a17b",phone:"",cphone:"+33 6 65 23 84 51"},
+  "Devoteam Digital Impulse":{nom:"Laurent Dubuis",role:"Director",email:"",linkedin:"https://www.linkedin.com/in/laurent-dubuis-1b439b45",phone:"",cphone:"+33 6 69 58 29 70"},
+  "DUOTECH INFORMATIQUE":{nom:"Jacky Marceau",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/jacky-marceau-1a6347269",phone:"",cphone:""},
+  "Digiuz":{nom:"Said Khammar",role:"Digital Workplace Consultant",email:"",linkedin:"https://www.linkedin.com/in/saidkhammar",phone:"",cphone:""},
+  "NEAPSYS":{nom:"Siwar Chahba",role:"Business Manager of Digital and SAP",email:"",linkedin:"https://www.linkedin.com/in/siwar-chahba-209b74207",phone:"",cphone:"+33 6 44 64 75 50"},
+  "ARKEUP":{nom:"Roland Ardile",role:"Business Developer",email:"",linkedin:"https://www.linkedin.com/in/roland-ardile-670b91123",phone:"",cphone:"+33 6 33 70 37 26"},
+  "AdeRHis":{nom:"Fahmi Aouiti",role:"Consultant",email:"",linkedin:"https://www.linkedin.com/in/fahmi-aouiti-08965895",phone:"",cphone:"+33 6 51 88 43 12"},
+  "Diggers":{nom:"Benoit Chevallier",role:"Business Unit Director",email:"",linkedin:"https://www.linkedin.com/in/benoit-chevallier-a08411136",phone:"",cphone:"+33 6 59 68 75 48"},
+  "Néosoft":{nom:"Christophe Masurel",role:"Directeur du Développement / Commercial",email:"christophe.masurel@neosoft.fr",linkedin:"https://www.linkedin.com/in/cmasurel/",phone:"",cphone:"",site:"https://www.neosoft.fr/",ville:"Rennes"},
+  "Hubvisory":{nom:"Pierre Cathelin",role:"Co-fondateur",email:"pierre.cathelin@hubvisory.com",linkedin:"https://www.linkedin.com/in/pierrecathelin/",phone:"",cphone:"",site:"https://www.hubvisory.com/",ville:"Paris"}
+};
+// Nouvelles petites ESN (hors base initiale) — fusionnées au chargement si absentes
+const EXTRA_PROSPECTS=[
+  {nom:'Younup',type:'ESN',segment:'Néo-ESN — web, DevOps, data, IA',ville:'Nantes',taille:'~ 300',site:'https://www.younup.fr/',prio:'Haute',notes:'Petite ESN agile (6 agences), peu d’outillage interne — cible idéale SkillDeck.'},
+  {nom:'Sfeir',type:'ESN',segment:'Dev, cloud, data (craft)',ville:'Neuilly-sur-Seine',taille:'~ 700',site:'https://www.sfeir.com/',prio:'Haute',notes:''},
+  {nom:'Kaliop',type:'ESN',segment:'Digital, open source, CMS',ville:'Montpellier',taille:'~ 120',site:'https://www.kaliop.com/',prio:'Haute',notes:'Structure régionale à taille humaine.'},
+  {nom:'Theodo',type:'ESN',segment:'Dev web/mobile agile (craft)',ville:'Paris',taille:'~ 800',site:'https://www.theodo.fr/',prio:'Haute',notes:''},
+  {nom:'Adservio',type:'ESN',segment:'Conseil & ingénierie IT',ville:'Puteaux',taille:'~ 155',site:'https://www.adservio.fr/',prio:'Haute',notes:''},
+  {nom:'Norsys',type:'ESN',segment:'Conseil & dev, entreprise à mission',ville:'Lille',taille:'~ 540',site:'https://www.norsys.fr/',prio:'Haute',notes:'ESN régionale (Lille, Lyon, Nantes, Tours, Grenoble).'},
+  {nom:'Scalian',type:'ESN',segment:'Digital, systèmes numériques, ingénierie',ville:'Toulouse',taille:'~ 5 000',site:'https://www.scalian.com/',prio:'Haute',notes:'Fort ancrage Toulouse / Sud-Ouest.'},
+  {nom:'ELCA',type:'ESN',segment:'Conseil IT, cybersécurité, data (Suisse)',ville:'Lausanne (CH)',taille:'~ 2 300',site:'https://www.elca.ch/',prio:'Haute',notes:'Leader IT suisse indépendant (Lausanne, Genève, Zurich, Berne, Bâle).'},
+  {nom:'Liip',type:'ESN',segment:'Agence digitale agile (Suisse)',ville:'Lausanne / Zurich (CH)',taille:'~ 200',site:'https://www.liip.ch/',prio:'Haute',notes:'Holacratie, petites équipes — peu d’outillage interne.'},
+  {nom:'Ekino',type:'ESN',segment:'Digital, data, IA (groupe Havas)',ville:'Bordeaux',taille:'~ 600',site:'https://www.ekino.fr/',prio:'Haute',notes:'Studio Bordeaux important (+ Paris, international).'},
+  {nom:'Avisia',type:'ESN',segment:'Data, digital & technologies',ville:'Bordeaux',taille:'~ 290',site:'https://www.avisia.fr/',prio:'Haute',notes:'Bureaux Bordeaux, Paris, Lyon, Nantes, Lille.'},
+  {nom:'VISEO',type:'ESN',segment:'Conseil digital & data, SAP, IA',ville:'Lyon',taille:'~ 3 000',site:'https://www.viseo.com/',prio:'Haute',notes:'Lyon, Paris, Nantes, Toulouse, Bordeaux, Grenoble, Aix.'},
+  {nom:'Netcetera',type:'ESN',segment:'Software & digital (fintech, mobilité)',ville:'Zurich (CH)',taille:'~ 1 000',site:'https://www.netcetera.com/',prio:'Haute',notes:'G+D Netcetera — Zurich, Berne, Bâle.'},
+  {nom:'Wavestone',type:'ESN',segment:'Conseil en management & transformation',ville:'Paris',taille:'~ 5 500',site:'https://www.wavestone.com/fr/',prio:'Moyenne',notes:''},
+  {nom:'Sword Group',type:'ESN',segment:'Conseil & software',ville:'Lyon',taille:'~ 3 000',site:'https://www.sword-group.com/',prio:'Haute',notes:''},
+  {nom:'Néosoft',type:'ESN',segment:'Conseil, dev, infra, cyber',ville:'Rennes',taille:'~ 1 800',site:'https://www.neosoft.fr/',prio:'Haute',notes:'Grand Ouest + Paris, Lyon, Toulouse.'},
+  {nom:'Apside',type:'ESN',segment:'Ingénierie & IT',ville:'Tours',taille:'~ 3 000',site:'https://www.apside.com/',prio:'Haute',notes:''},
+  {nom:'ASI',type:'ESN',segment:'Conseil, data, digital',ville:'Rennes',taille:'~ 1 000',site:'https://www.asi.fr/',prio:'Haute',notes:''},
+  {nom:'Sigma',type:'ESN',segment:'Édition & services numériques',ville:'Nantes',taille:'~ 1 800',site:'https://www.sigma.fr/',prio:'Haute',notes:''},
+  {nom:'Klee Group',type:'ESN',segment:'Conseil & ingénierie logicielle',ville:'Meudon',taille:'~ 800',site:'https://www.kleegroup.com/',prio:'Haute',notes:''},
+  {nom:'Positive Thinking Company',type:'ESN',segment:'Cloud, data, digital',ville:'Paris',taille:'~ 1 500',site:'https://www.positivethinking.tech/',prio:'Haute',notes:'International, multi-villes.'},
+  {nom:'Octo Technology',type:'ESN',segment:'Dev, cloud, data (Accenture)',ville:'Paris',taille:'~ 700',site:'https://www.octo.com/',prio:'Haute',notes:''},
+  {nom:'Squad',type:'ESN',segment:'Cybersécurité, cloud, DevOps',ville:'Paris',taille:'~ 900',site:'https://www.squad.fr/',prio:'Haute',notes:''},
+  {nom:'Almond',type:'ESN',segment:'Cybersécurité, cloud, infra',ville:'Nantes',taille:'~ 600',site:'https://www.almond.eu/',prio:'Haute',notes:''},
+  {nom:'Synetis',type:'ESN',segment:'Cybersécurité (IAM, GRC)',ville:'Paris',taille:'~ 400',site:'https://www.synetis.com/',prio:'Haute',notes:''},
+  {nom:'Devensys',type:'ESN',segment:'Cybersécurité & infra',ville:'Montpellier',taille:'~ 200',site:'https://www.devensys.com/',prio:'Haute',notes:''},
+  {nom:'Synacktiv',type:'ESN',segment:'Cybersécurité offensive',ville:'Paris',taille:'~ 200',site:'https://www.synacktiv.com/',prio:'Haute',notes:''},
+  {nom:'Padok',type:'ESN',segment:'DevOps & Cloud (craft)',ville:'Paris',taille:'~ 120',site:'https://www.padok.fr/',prio:'Haute',notes:''},
+  {nom:'Marmelab',type:'ESN',segment:'Dev web & innovation',ville:'Nancy',taille:'~ 60',site:'https://marmelab.com/',prio:'Haute',notes:''},
+  {nom:'Eleven Labs',type:'ESN',segment:'Dev web/mobile (craft)',ville:'Paris',taille:'~ 150',site:'https://eleven-labs.com/',prio:'Haute',notes:''},
+  {nom:'Hubvisory',type:'ESN',segment:'Product management & design',ville:'Paris',taille:'~ 200',site:'https://www.hubvisory.com/',prio:'Haute',notes:''},
+  {nom:'Wemanity',type:'ESN',segment:'Agilité & transformation',ville:'Paris',taille:'~ 600',site:'https://www.wemanity.com/',prio:'Moyenne',notes:''},
+  {nom:'Ineat',type:'ESN',segment:'Digital, data, cloud',ville:'Lille',taille:'~ 600',site:'https://www.ineat-group.com/',prio:'Haute',notes:''},
+  {nom:'SoyHuCe',type:'ESN',segment:'Data & dev sur-mesure',ville:'Caen',taille:'~ 150',site:'https://www.soyhuce.fr/',prio:'Haute',notes:''},
+  {nom:'Sopra Banking Software',type:'ESN',segment:'Édition logicielle banque',ville:'Paris',taille:'~ 5 000',site:'https://www.soprabanking.com/',prio:'Moyenne',notes:''},
+  {nom:'Capgemini Invent',type:'ESN',segment:'Conseil innovation & transfo',ville:'Paris',taille:'~ 10 000',site:'https://www.capgemini.com/fr-fr/services/invent/',prio:'Moyenne',notes:''},
+  {nom:'talent.io',type:'Cabinet de recrutement',segment:'Plateforme recrutement tech',ville:'Paris',taille:'PME',site:'https://www.talent.io/',prio:'Haute',notes:''},
+  {nom:'Elinoï',type:'Cabinet de recrutement',segment:'Talents startups / scale-ups',ville:'Paris',taille:'PME',site:'https://www.elinoi.com/',prio:'Moyenne',notes:''},
+  {nom:'Lincoln',type:'Cabinet de recrutement',segment:'Recrutement cadres & IT',ville:'Paris',taille:'~ 200',site:'https://www.lincoln.fr/',prio:'Moyenne',notes:''},
+  {nom:'Huxley',type:'Cabinet de recrutement',segment:'IT & tech (SThree)',ville:'Paris',taille:'International',site:'https://www.huxley.com/',prio:'Basse',notes:''},
+  {nom:'Page Personnel IT',type:'Cabinet de recrutement',segment:'Techniciens & cadres IT',ville:'Paris',taille:'PageGroup',site:'https://www.pagepersonnel.fr/',prio:'Moyenne',notes:''},
+  {nom:'Expectra',type:'Cabinet de recrutement',segment:'IT & ingénierie (Randstad)',ville:'Paris',taille:'Grand réseau',site:'https://www.expectra.fr/',prio:'Moyenne',notes:''},
+  {nom:'Cooptalis',type:'Cabinet de recrutement',segment:'Recrutement & mobilité',ville:'Lille',taille:'~ 300',site:'https://www.cooptalis.com/',prio:'Moyenne',notes:''},
+  {nom:'Uptoo',type:'Cabinet de recrutement',segment:'Recrutement commerciaux',ville:'Paris',taille:'~ 150',site:'https://uptoo.fr/',prio:'Basse',notes:''},
+  {nom:'Zühlke',type:'ESN',segment:'Engineering & innovation (Suisse)',ville:'Zurich (CH)',taille:'~ 1 800',site:'https://www.zuehlke.com/',prio:'Haute',notes:''},
+  {nom:'AdNovum',type:'ESN',segment:'Software & sécurité (Suisse)',ville:'Zurich (CH)',taille:'~ 600',site:'https://www.adnovum.com/',prio:'Haute',notes:''},
+  {nom:'Unic',type:'ESN',segment:'Digital experience & commerce',ville:'Zurich (CH)',taille:'~ 400',site:'https://www.unic.com/',prio:'Haute',notes:'Zurich, Berne, Lausanne.'},
+  {nom:'ti&m',type:'ESN',segment:'Digitalisation & sécurité',ville:'Zurich (CH)',taille:'~ 600',site:'https://www.ti8m.com/',prio:'Haute',notes:''},
+  {nom:'Ergon Informatik',type:'ESN',segment:'Software sur-mesure (Suisse)',ville:'Zurich (CH)',taille:'~ 400',site:'https://www.ergon.ch/',prio:'Haute',notes:''},
+  {nom:'Puzzle ITC',type:'ESN',segment:'Open source, cloud, DevOps',ville:'Berne (CH)',taille:'~ 200',site:'https://www.puzzle.ch/',prio:'Haute',notes:''},
+  {nom:'bbv Software Services',type:'ESN',segment:'Conseil & dev logiciel',ville:'Lucerne (CH)',taille:'~ 500',site:'https://www.bbv.ch/',prio:'Haute',notes:''},
+  {nom:'mimacom',type:'ESN',segment:'Dev, data, intégration',ville:'Berne (CH)',taille:'~ 400',site:'https://www.mimacom.com/',prio:'Haute',notes:''},
+  {nom:"INOP'S",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"Faceel-it",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"l'Oiseau Rare",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"Consult IT",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"DatalakeGroup",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"Daveo",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"engIT",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"NUMERYX",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"T&T Consulting SAS",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"HARA Consulting",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"ONECORP",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"AMAYAS Consulting",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"Green-SI by PROXIAD",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"Amontech (groupe Artemys)",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"SERVICIT",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"Reisel",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"HUdata",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"Dauphine Group",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"Clevermind",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"Aneo",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"SHARP BUSINESS SYSTEMS FRANCE",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"ACT-ON TECHNOLOGY",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"Groupe Havana",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"SIJO",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"ISALYS AUGMENTED MANAGEMENT",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"Spark-it",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Haute",notes:""},
+  {nom:"Osmose",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Moyenne",notes:""},
+  {nom:"Size Up Consulting",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Moyenne",notes:""},
+  {nom:"AOSIS",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Moyenne",notes:""},
+  {nom:"Apogea",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Moyenne",notes:""},
+  {nom:"OPEN",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Moyenne",notes:""},
+  {nom:"PIMAN Digital Partners",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Moyenne",notes:""},
+  {nom:"ATEXIS",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Moyenne",notes:""},
+  {nom:"Ripple Motion Services",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Moyenne",notes:""},
+  {nom:"Asenium Consulting",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Moyenne",notes:""},
+  {nom:"PREREQUIS",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Moyenne",notes:""},
+  {nom:"Bloomco",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Moyenne",notes:""},
+  {nom:"Akor Consulting",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Moyenne",notes:""},
+  {nom:"A5sys",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Moyenne",notes:""},
+  {nom:"Beelix",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Moyenne",notes:""},
+  {nom:"AEZAN",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Moyenne",notes:""},
+  {nom:"TRIGONE (part of the NRB Group)",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"SOFTEAM Expertise Data & IA",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"ConvictionsRH",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Weliom",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"KaOra Partners",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"CITECH",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Accretio",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Key Performance Consulting (KPC)",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Business At Work",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Artimon",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"ADVENTS",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Valeuriad",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"KYU",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Clever Cloud",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Twelve Consulting",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"BIAL-X",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Direction du numérique des Ministères Sociaux",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"ALTHEA",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"LeHibou",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Attineos Applications",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Younited",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"ALTICAP",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"ON-X Groupe",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"ScaleSquad",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Avaliance France",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"HR Team Group",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"LIPTON FIT",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"OLCYA",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"alpha micro",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"iNet Process",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Banque Populaire Auvergne Rhône Alpes",type:"ESN",segment:"Banking",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"NXO Telecom",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Inten-FR",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Artik Consulting",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"NATAN",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Cowigo",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Anywr",type:"Cabinet de recrutement",segment:"Human Resources Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"ROXYS",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"SIKIA",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Societe Generale Private Banking - SGPB",type:"ESN",segment:"Financial Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"ASPAWAY",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"AntemetA",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"VO2 GROUP",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Compagnie Francaise Informatique",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"SISTEMA STRATEGY",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Qwerio",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"WINTEK",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"ADVANCED Schema",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"LittleBigCode",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Mister IA",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Groupama d'Oc",type:"ESN",segment:"Insurance",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"SensioLabs",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Teolia",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"AgoraVita",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Kelerian Group",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Thiga",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Tersedia",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"DEVOLIS",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"EASYDESK",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Sofinco S.A.",type:"ESN",segment:"Financial Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Maten",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Well'd",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"GIANT Consulting 🌐",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"AUTHENTIC Group",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"INVIVOO",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Augusta Reeves - SAP Global Partner",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Baker Tilly France",type:"ESN",segment:"Financial Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"SECURINFOR",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Cyllene",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Athéo Ingénierie",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"CODiLOG",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"GroupeFBO",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Groupe Avanista",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Anacau",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"BeMSP",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"NEWTEAM CONSULTING",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"RS2i",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Kaizzen",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"ERICA Informatique",type:"ESN",segment:"Computer & Network Security Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"COOPERTEAM",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"FINELOG-BISEUM",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Crédit Agricole Pyrénées Gascogne",type:"ESN",segment:"Banking",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"DataValue Strategy",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"DATAHORIZON",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Intrabases",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Jamespot",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"ABSYS CYBORG",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"OJC Conseil",type:"ESN",segment:"Software Development",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Technomade",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Cyrias",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"PROLOGISM",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Phenisys",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Neos-SDI",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Clay Group",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Silkhom | LUNOPA Group",type:"Cabinet de recrutement",segment:"Staffing & Recruiting",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"VPWhite",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Alteca",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Opteamis",type:"ESN",segment:"Outsourcing & Offshoring Consulting",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"AS International Group",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Monabanq",type:"ESN",segment:"Banking",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Cloud Temple",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"AYLI CONSULTING",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Blue Soft Consulting (ex-Daylight)",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Feneex IT",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Aceo Tech",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Onefirst",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"FEKRA GROUP",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"ITEC",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Ovalo CX",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"GLOBAL PARTNER",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Lucem",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Consort",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"IT Systemes",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Audensiel",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Easis Consulting",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"MARCEA Conseil",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"W hub",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"MTI France SAS",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"ETIXWAY",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Oney",type:"ESN",segment:"Financial Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"BK Solutions | Expert SAP S/4 HANA et CEGID XRP Ultimate",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Hibyrd",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Odyssée Conseil",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Devoteam Digital Impulse",type:"ESN",segment:"Business Consulting & Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"DUOTECH INFORMATIQUE",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Digiuz",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"NEAPSYS",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"ARKEUP",type:"ESN",segment:"IT Consulting & IT Services",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"AdeRHis",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+  {nom:"Diggers",type:"ESN",segment:"",ville:"",taille:"",site:"",prio:"Basse",notes:""},
+];
+function mergeExtra(){
+  EXTRA_PROSPECTS.forEach((x,i)=>{ if(!DATA.some(p=>p.nom===x.nom)){ DATA.unshift(normalize({id:'x'+i+'_'+Date.now(),statut:'À contacter',dernierContact:'',relanceDate:'',owner:'',email:'',...x})); } });
+}
+const ENRICH_VERSION=14; const LS_ENRICHV='skilldeck_crm_enrichv';
+function applyEnrichment(){
+  let stored=0; try{ stored=parseInt(localStorage.getItem(LS_ENRICHV)||'0'); }catch(e){}
+  const force = stored < ENRICH_VERSION;   // rafraîchit les contacts enrichis quand la base contacts évolue
+  DATA.forEach(p=>{ const e=ENRICH[p.nom]; if(!e) return;
+    if(force || !p.contactNom){ p.contactNom=e.nom; p.contactRole=e.role; p.contactLinkedin=e.linkedin; }
+    if((force || !p.email) && e.email) p.email=e.email;
+    if((force || !p.phone) && e.phone) p.phone=e.phone;
+    if((force || !p.contactPhone) && e.cphone) p.contactPhone=e.cphone;
+    if((force || !p.site) && e.site) p.site=e.site;
+    if((force || !p.ville) && e.ville) p.ville=e.ville;
+  });
+  try{ localStorage.setItem(LS_ENRICHV, String(ENRICH_VERSION)); }catch(e){}
+}
+/* ─── Synchro serveur partagé (Tim + Romain voient la même base) ─── */
+let TOKEN=(function(){ try{return localStorage.getItem('skilldeck_token')||'';}catch(e){return '';} })();
+const SYNC = (location.protocol==='http:'||location.protocol==='https:');  // vrai quand servi par le serveur
+let _saveTimer=null;
+function authHeaders(extra){ const hh=Object.assign({},extra||{}); if(TOKEN) hh['Authorization']='Bearer '+TOKEN; return hh; }
+function buildSeed(){ DATA=SEED.map((p,i)=>normalize({id:'p'+i,statut:'À contacter',email:'',dernierContact:'',relanceDate:'',owner:'',...p})); mergeExtra(); applyEnrichment(); fillGenericEmails(); }
+async function load(){
+  if(SYNC && TOKEN){
+    try{
+      const r=await fetch('/api/data',{headers:authHeaders()});
+      if(r.status===401){ TOKEN=''; try{localStorage.removeItem('skilldeck_token');}catch(e){} showLogin(); return; }
+      if(r.ok){ const d=await r.json();
+        if(d && Array.isArray(d.prospects) && d.prospects.length){ DATA=d.prospects.map(normalize); } else { buildSeed(); }
+        mergeExtra(); applyEnrichment(); fillGenericEmails(); pushData(); return;
+      }
+    }catch(e){ console.warn('Sync serveur KO',e); }
+  }
+  try{ const raw=localStorage.getItem(LS_KEY); if(raw){ DATA=JSON.parse(raw).map(normalize); } else { buildSeed(); } }catch(e){ buildSeed(); }
+  mergeExtra(); applyEnrichment(); fillGenericEmails(); localStorage.setItem(LS_KEY, JSON.stringify(DATA));
+}
+function pushData(){ if(!(SYNC&&TOKEN)) return; fetch('/api/data',{method:'POST',headers:authHeaders({'Content-Type':'application/json'}),body:JSON.stringify({prospects:DATA})}).catch(()=>{}); }
+function save(){ try{localStorage.setItem(LS_KEY, JSON.stringify(DATA));}catch(e){} if(SYNC&&TOKEN){ clearTimeout(_saveTimer); _saveTimer=setTimeout(pushData,500); } }
+
+const DEFAULT_SETTINGS={
+  sender:'Tim', company:'SkillDeck', weeklyGoal:10,
+  signature:'Tim\nSkillDeck — le CV transformé en dossier de compétences en moins de 2 min\nhttps://skilldeck.fr',
+  templates:[
+    {name:'Premier contact — ESN', subject:'SkillDeck × {nom} — vos dossiers de compétences en 2 min',
+     body:"Bonjour,\n\nJe me permets de vous contacter car {nom} produit régulièrement des dossiers de compétences pour positionner vos consultants chez vos clients.\n\nChez SkillDeck, on transforme un simple CV en dossier de compétences propre et harmonisé en moins de 2 minutes — de quoi faire gagner un temps précieux à vos équipes de staffing et homogénéiser vos présentations.\n\nSeriez-vous disponible 15 min cette semaine pour que je vous montre concrètement ce que ça donne sur l'un de vos profils ?\n\nBien à vous,\n{signature}"},
+    {name:'Premier contact — Cabinet', subject:'Présenter vos candidats plus vite — SkillDeck × {nom}',
+     body:"Bonjour,\n\n{nom} présente chaque semaine des profils candidats à ses clients. SkillDeck transforme un CV en dossier de compétences clair et à vos couleurs en moins de 2 minutes.\n\nVos consultants gagnent du temps sur la mise en forme et envoient des présentations homogènes et professionnelles.\n\nOuvert·e à un échange de 15 min pour vous faire une démo sur un de vos profils ?\n\nBien cordialement,\n{signature}"},
+    {name:'Relance', subject:'Re: SkillDeck × {nom}',
+     body:"Bonjour,\n\nJe me permets de revenir vers vous suite à mon précédent message concernant SkillDeck.\n\nJe serais ravi de vous montrer en 15 min comment {nom} peut générer ses dossiers de compétences en quelques secondes. Quelles seraient vos disponibilités ?\n\nBien à vous,\n{signature}"}
+  ]
+};
+let SETTINGS=JSON.parse(JSON.stringify(DEFAULT_SETTINGS));
+function loadSettings(){ try{ const r=localStorage.getItem(LS_SET); if(r) SETTINGS=Object.assign(JSON.parse(JSON.stringify(DEFAULT_SETTINGS)),JSON.parse(r)); }catch(e){} }
+function saveSettings(){ localStorage.setItem(LS_SET, JSON.stringify(SETTINGS)); }
+
+/* ═══════════════ Helpers ═══════════════ */
+const esc=s=>(s==null?'':String(s)).replace(/[&<>"]/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;'}[c]));
+const statusMeta=k=>STATUSES.find(s=>s.k===k)||STATUSES[0];
+const typeBadge=t=>t==='ESN'?'b-esn':(t==='Cabinet de recrutement'?'b-cab':'b-indep');
+const typeShort=t=>t==='Cabinet de recrutement'?'Cabinet':(t==='Recruteur indépendant'?'Indé':'ESN');
+function toast(msg,err){ const t=document.getElementById('toast'); t.textContent=msg; t.className='toast show'+(err?' err':''); setTimeout(()=>t.className='toast',2800); }
+function fillTemplate(str,p){ return (str||'').replaceAll('{nom}',p.nom||'').replaceAll('{type}',p.type||'').replaceAll('{ville}',p.ville||'').replaceAll('{signature}',SETTINGS.signature||'').replaceAll('{sender}',SETTINGS.sender||'').replaceAll('{company}',SETTINGS.company||''); }
+
+/* ═══════════════ Dates / relances ═══════════════ */
+const RELANCE_DAYS=4;
+function addBusinessDays(d,n){ const x=new Date(d); let a=0; while(a<n){ x.setDate(x.getDate()+1); const dy=x.getDay(); if(dy!==0&&dy!==6)a++; } return x; }
+function isoDate(d){ const x=new Date(d); return x.getFullYear()+'-'+String(x.getMonth()+1).padStart(2,'0')+'-'+String(x.getDate()).padStart(2,'0'); }
+function todayISO(){ return isoDate(new Date()); }
+function fmtDate(iso){ if(!iso) return ''; const p=iso.slice(0,10).split('-'); return p[2]+'/'+p[1]; }
+function fmtDateTime(iso){ const d=new Date(iso); return fmtDate(isoDate(d))+' '+String(d.getHours()).padStart(2,'0')+'h'+String(d.getMinutes()).padStart(2,'0'); }
+function weekStartISO(){ const d=new Date(); const off=(d.getDay()+6)%7; d.setDate(d.getDate()-off); return isoDate(d); }
+function scheduleRelance(p){ p.relanceDate=isoDate(addBusinessDays(new Date(),RELANCE_DAYS)); }
+function relanceDue(p){ return p.relanceDate && p.relanceDate<=todayISO() && p.statut!=='Gagné' && p.statut!=='Perdu'; }
+function relancePending(p){ return p.relanceDate && p.statut!=='Gagné' && p.statut!=='Perdu'; }
+function clearRelance(id){ const p=DATA.find(x=>x.id===id); if(p){ p.relanceDate=''; logActivity(p,'note','Relance marquée comme traitée'); save(); refreshAll(); closeModal('detailOverlay'); toast('Relance traitée'); } }
+
+/* ───────────────────────── Clients & CA ───────────────────────── */
+const STATUS_PROB={'À contacter':0.05,'Contacté':0.15,'Relancé':0.25,'En discussion':0.5,'Gagné':1,'Perdu':0};
+function fmtEur(n){ n=Math.round(+n||0); return n.toLocaleString('fr-FR')+' €'; }
+function isClient(p){ return p.statut==='Gagné'; }
+function caSigne(fn){ return DATA.filter(p=>isClient(p)&&(!fn||fn(p))).reduce((s,p)=>s+(+p.dealValue||0),0); }
+function mrrTotal(){ return DATA.filter(p=>isClient(p)&&/MRR|Mensuel/i.test(p.dealRecurrence)).reduce((s,p)=>s+(+p.dealValue||0),0); }
+function pipelineWeighted(){ return DATA.reduce((s,p)=>s+(+p.dealValue||0)*(STATUS_PROB[p.statut]||0),0); }
+function parseHead(t){ const m=(t||'').replace(/[ \u00a0]/g,'').match(/(\d+)/); return m?parseInt(m[1]):null; }
+function isSmallTarget(p){ if(p.type!=='ESN') return false; const n=parseHead(p.taille); return n===null || n<=2000; }
+function domainFromSite(s){ return (s||'').replace(/^https?:\/\//,'').replace(/^www\./,'').replace(/\/.*$/,'').trim(); }
+function fillGenericEmails(){ DATA.forEach(function(p){ if(!p.email && p.site){ var d=domainFromSite(p.site); if(d && d.indexOf('.')>0){ p.email='contact@'+d; p.emailGeneric=true; } } }); }
+
+/* ═══════════════ Activité & tâches ═══════════════ */
+function logActivity(p,kind,text){ p.history.unshift({ts:new Date().toISOString(),user:currentUser||'—',kind,text}); }
+function addTask(id){
+  const label=document.getElementById('newTaskLabel').value.trim();
+  const due=document.getElementById('newTaskDue').value;
+  if(!label){ toast('Décris la tâche',true); return; }
+  const p=DATA.find(x=>x.id===id);
+  p.tasks.push({id:'t'+Date.now(),label,due,done:false,user:currentUser});
+  logActivity(p,'note','Tâche ajoutée : '+label);
+  save(); openDetail(id,'taches'); refreshAll();
+}
+function toggleTask(id,tid){ const p=DATA.find(x=>x.id===id); const t=p.tasks.find(t=>t.id===tid); if(t){ t.done=!t.done; save(); openDetail(id,'taches'); refreshAll(); } }
+function delTask(id,tid){ const p=DATA.find(x=>x.id===id); p.tasks=p.tasks.filter(t=>t.id!==tid); save(); openDetail(id,'taches'); refreshAll(); }
+function addManualActivity(id){
+  const kind=document.getElementById('actKind').value;
+  const text=document.getElementById('actText').value.trim();
+  if(!text){ toast('Décris l\'activité',true); return; }
+  const p=DATA.find(x=>x.id===id);
+  logActivity(p,kind,text);
+  if(kind==='appel'||kind==='rdv'||kind==='mail'){ if(!p.owner)p.owner=currentUser; p.dernierContact=todayISO(); }
+  save(); openDetail(id,'historique'); refreshAll();
+}
+
+/* ═══════════════ Auth ═══════════════ */
+/* Auth serveur sécurisée (jeton). USERS = liste des commerciaux pour l'UI (sans mot de passe). */
+let USERS=[], currentUser=null, mineOnly=false, relanceOnly=false, targetOnly=false;
+async function loadUsersList(){
+  if(SYNC && TOKEN){ try{ const r=await fetch('/api/users',{headers:authHeaders()}); if(r.ok){ USERS=await r.json(); return; } }catch(e){} }
+  if(!USERS.length) USERS=[{name:'Tim',email:''},{name:'Romain',email:''}];
+}
+function initials(n){ return (n||'?').trim().split(/\s+/).map(w=>w[0]||'').slice(0,2).join('').toUpperCase()||'?'; }
+function fillLoginUsers(){}
+async function initAuth(){
+  if(SYNC && TOKEN){ try{ const r=await fetch('/api/me',{headers:authHeaders()}); if(r.ok){ const d=await r.json(); currentUser=d.name; await loadUsersList(); await load(); showApp(); return; } }catch(e){} TOKEN=''; try{localStorage.removeItem('skilldeck_token');}catch(e){} }
+  if(!SYNC){ const lu=localStorage.getItem('skilldeck_localuser'); if(lu){ currentUser=lu; await loadUsersList(); await load(); showApp(); return; } }
+  showLogin();
+}
+function showLogin(){ document.getElementById('loginScreen').style.display='flex'; }
+function showApp(){ document.getElementById('loginScreen').style.display='none'; renderUserChip(); switchView(currentView); }
+async function doLogin(){
+  const n=document.getElementById('loginUser').value.trim(), p=document.getElementById('loginPass').value, err=document.getElementById('loginErr');
+  if(SYNC){
+    try{ const r=await fetch('/api/login',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({name:n,password:p})});
+      if(!r.ok){ err.textContent='Identifiants incorrects.'; err.style.display='block'; return; }
+      const d=await r.json(); TOKEN=d.token; try{localStorage.setItem('skilldeck_token',TOKEN);}catch(e){} currentUser=d.name;
+      document.getElementById('loginPass').value=''; err.style.display='none'; await loadUsersList(); await load(); showApp(); return;
+    }catch(e){ err.textContent='Serveur injoignable.'; err.style.display='block'; return; }
+  }
+  if(!n){ err.style.display='block'; return; }
+  currentUser=n; try{localStorage.setItem('skilldeck_localuser',n);}catch(e){} err.style.display='none'; await loadUsersList(); await load(); showApp();
+}
+function logout(){ currentUser=null; TOKEN=''; try{localStorage.removeItem('skilldeck_token'); localStorage.removeItem('skilldeck_localuser');}catch(e){} mineOnly=false; document.querySelectorAll('#mineBtn,#mineBtn2').forEach(b=>b.classList.remove('active')); showLogin(); }
+function renderUserChip(){ document.getElementById('userChip').innerHTML=`<span class="avatar sm">${initials(currentUser)}</span>${esc(currentUser)}<button class="icon-btn" title="Déconnexion" style="width:26px;height:26px" onclick="logout()">⎋</button>`; }
+function toggleMine(){ mineOnly=!mineOnly; document.querySelectorAll('#mineBtn,#mineBtn2').forEach(b=>b.classList.toggle('active',mineOnly)); refreshAll(); }
+function toggleRelance(){ relanceOnly=!relanceOnly; document.getElementById('relanceBtn').classList.toggle('active',relanceOnly); render(); }
+function toggleTarget(){ targetOnly=!targetOnly; document.getElementById('targetBtn').classList.toggle('active',targetOnly); render(); }
+let mailTarget=false, mailMine=false, _mailInit=false;
+function mailRecipients(){
+  const ty=document.getElementById('mailType').value, st=document.getElementById('mailStatut').value;
+  return DATA.filter(p=> p.email && p.email.indexOf('@')>0 && (!ty||p.type===ty) && (!st||p.statut===st) && (!mailTarget||isSmallTarget(p)) && (!mailMine||p.owner===currentUser));
+}
+function mailFirstName(p){ return p.contactNom? (' '+p.contactNom.trim().split(/\s+/)[0]) : ''; }
+function personalize(str,p){ return fillTemplate(str,p).split('{contact}').join(mailFirstName(p)); }
+function applyMailTemplate(){ const sel=document.getElementById('mailTmpl'); const t=SETTINGS.templates[+((sel&&sel.value)||0)]||SETTINGS.templates[0]; document.getElementById('mailSubject').value=t.subject; document.getElementById('mailBody').value=t.body; }
+function renderMailing(){
+  if(!_mailInit){
+    document.getElementById('mailStatut').innerHTML='<option value="">Tous statuts</option>'+STATUSES.map(s=>'<option>'+s.k+'</option>').join('');
+    document.getElementById('mailTmpl').innerHTML=SETTINGS.templates.map((t,i)=>'<option value="'+i+'">'+esc(t.name)+'</option>').join('');
+    applyMailTemplate(); _mailInit=true;
+  }
+  const r=mailRecipients();
+  document.getElementById('mailCount').textContent=r.length;
+  const withEmail=DATA.filter(p=>p.email&&p.email.indexOf('@')>0).length;
+  document.getElementById('mailStat').textContent=withEmail+' prospects ont un e-mail dans la base · '+r.length+' destinataires sélectionnés.';
+  var _ea=document.getElementById('mailEmails'); if(_ea) _ea.value=r.map(p=>p.email).join('; ');
+  document.getElementById('mailList').innerHTML = r.length? r.map(p=>`<div class="list-item" onclick="openDetail('${p.id}')"><div class="li-main"><div class="li-name">${esc(p.contactNom||p.nom)}</div><div class="li-sub">${esc(p.email)} · ${esc(p.nom)}</div></div><span class="badge ${typeBadge(p.type)}">${typeShort(p.type)}</span></div>`).join('') : '<div class="empty">Aucun destinataire avec e-mail pour ces filtres.</div>';
+}
+function copyMailingEmails(){ const r=mailRecipients(); if(!r.length){toast('Aucun destinataire',true);return;} navigator.clipboard.writeText(r.map(p=>p.email).join('; ')).then(()=>toast(r.length+' e-mails copiés')); }
+function mailtoBcc(){ const r=mailRecipients(); if(!r.length){toast('Aucun destinataire',true);return;} const s=encodeURIComponent(document.getElementById('mailSubject').value); window.open('mailto:?bcc='+encodeURIComponent(r.map(p=>p.email).join(','))+'&subject='+s,'_blank'); }
+function exportMailingCSV(){ const r=mailRecipients(); const csv='\ufeff"Societe";"Contact";"Email"\n'+r.map(p=>'"'+(p.nom||'').replace(/"/g,'""')+'";"'+(p.contactNom||'').replace(/"/g,'""')+'";"'+p.email+'"').join('\n'); const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); a.download='skilldeck-mailing.csv'; a.click(); toast('CSV téléchargé'); }
+async function bulkDrafts(){
+  const r=mailRecipients(); if(!r.length){toast('Aucun destinataire',true);return;}
+  if(!window.cowork||!window.cowork.callMcpTool){ toast('Brouillons Gmail dispo uniquement dans Cowork — utilise « Copier les e-mails »',true); return; }
+  if(!confirm('Créer '+r.length+' brouillons Gmail personnalisés (un par destinataire) ?')) return;
+  const subT=document.getElementById('mailSubject').value, bodyT=document.getElementById('mailBody').value; let ok=0,fail=0;
+  for(const p of r){
+    try{ const res=await window.cowork.callMcpTool('mcp__557be9fd-f720-4298-ab46-f323201242f5__create_draft',{to:[p.email],subject:personalize(subT,p),body:personalize(bodyT,p)});
+      if(res&&res.isError){fail++;} else { ok++; logActivity(p,'mail','Brouillon mailing de masse'); if(!p.owner)p.owner=currentUser; if(p.statut==='À contacter')p.statut='Contacté'; if(!p.relanceDate)scheduleRelance(p); }
+    }catch(e){ fail++; }
+    toast('Création… '+(ok+fail)+'/'+r.length);
+  }
+  save(); refreshAll(); toast('✅ '+ok+' brouillons créés'+(fail?(' · '+fail+' échecs'):''));
+}
+function applyTheme(t){ document.documentElement.setAttribute('data-theme',t); try{localStorage.setItem('skilldeck_theme',t);}catch(e){}
+  if(window.Chart){ Chart.defaults.color=(t==='dark')?'#9a96a8':'#6f6a7b'; Chart.defaults.borderColor=(t==='dark')?'#2a2733':'#e4e0d5'; }
+  var b=document.getElementById('themeBtn'); if(b) b.textContent=(t==='dark')?'\u2600\ufe0e Thème clair':'\ud83c\udf19 Thème sombre';
+  if(typeof currentUser!=='undefined' && currentUser && typeof refreshAll==='function') refreshAll();
+}
+function toggleTheme(){ var cur=document.documentElement.getAttribute('data-theme')||'light'; applyTheme(cur==='dark'?'light':'dark'); }
+
+async function openUsers(){
+  let list=USERS;
+  if(SYNC && TOKEN){ try{ const r=await fetch('/api/users',{headers:authHeaders()}); if(r.ok) list=await r.json(); }catch(e){} }
+  const rows=(list||[]).map(u=>`<div class="user-row"><span class="avatar sm">${initials(u.name)}</span>
+    <div class="li-main"><div class="li-name">${esc(u.name)}</div><div class="li-sub">${esc(u.email||'')}</div></div>
+    <button class="icon-btn" title="Supprimer" onclick="delUser('${esc(u.name)}')">🗑</button></div>`).join('');
+  document.getElementById('usersModal').innerHTML=`
+    <div class="modal-head"><div><h3>Commerciaux</h3><div class="sub">Comptes — mots de passe chiffrés côté serveur</div></div><button class="close" onclick="closeModal('usersOverlay')">×</button></div>
+    <div class="modal-body"><div id="usersList">${rows}</div>
+      <div class="grid2" style="margin-top:14px"><div class="field" style="margin:0"><label>Nom</label><input id="nuName"/></div><div class="field" style="margin:0"><label>E-mail</label><input id="nuMail"/></div></div>
+      <div class="field" style="margin-top:8px"><label>Mot de passe</label><input id="nuPass" type="text"/></div>
+      <button class="btn btn-primary btn-sm" onclick="addServerUser()">＋ Ajouter le commercial</button>
+      <div class="note-hint" style="margin-top:10px">${(SYNC&&TOKEN)?'🔒 Sécurisé : mots de passe chiffrés (bcrypt) et stockés côté serveur.':'⚠️ Mode local (fichier) : la gestion des comptes nécessite le serveur déployé.'}</div></div>
+    <div class="modal-foot"><button class="btn btn-ghost btn-sm" onclick="closeModal('usersOverlay')">Fermer</button></div>`;
+  document.getElementById('usersOverlay').classList.add('open');
+}
+async function addServerUser(){ const name=document.getElementById('nuName').value.trim(), pass=document.getElementById('nuPass').value, email=document.getElementById('nuMail').value.trim();
+  if(!name||!pass){ toast('Nom + mot de passe requis',true); return; }
+  if(!(SYNC&&TOKEN)){ toast('Disponible une fois le serveur déployé',true); return; }
+  try{ const r=await fetch('/api/users',{method:'POST',headers:authHeaders({'Content-Type':'application/json'}),body:JSON.stringify({name:name,password:pass,email:email})}); if(!r.ok)throw 0; await loadUsersList(); openUsers(); toast('Commercial ajouté'); }catch(e){ toast('Erreur ajout',true); } }
+async function delUser(name){ if(!confirm('Supprimer '+name+' ?'))return; if(!(SYNC&&TOKEN)){toast('Serveur requis',true);return;} try{ await fetch('/api/users/'+encodeURIComponent(name),{method:'DELETE',headers:authHeaders()}); await loadUsersList(); openUsers(); toast('Commercial supprimé'); }catch(e){ toast('Erreur',true); } }
+
+/* ═══════════════ Vues ═══════════════ */
+function switchView(v){
+  currentView=v;
+  document.querySelectorAll('.view').forEach(s=>s.classList.toggle('active',s.id==='view-'+v));
+  document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
+  const titles={home:'Accueil',prospects:'Prospects',pipeline:'Pipeline',clients:'Clients & CA',mailing:'Mailing de masse',analytics:'Analytics'};
+  const vt=document.getElementById('viewTitle'); if(vt) vt.textContent=titles[v]||'';
+  if(v==='home') renderHome();
+  else if(v==='prospects') render();
+  else if(v==='pipeline') renderKanban();
+  else if(v==='clients') renderClients();
+  else if(v==='mailing') renderMailing();
+  else if(v==='analytics') renderAnalytics();
+}
+function refreshAll(){ if(currentView==='home')renderHome(); else if(currentView==='prospects')render(); else if(currentView==='pipeline')renderKanban(); else if(currentView==='clients')renderClients(); else if(currentView==='mailing')renderMailing(); else if(currentView==='analytics')renderAnalytics(); }
+
+/* ═══════════════ Clients & CA ═══════════════ */
+function renderClients(){
+  const clients=DATA.filter(isClient).sort((a,b)=>(+b.dealValue||0)-(+a.dealValue||0));
+  const total=caSigne(), mrr=mrrTotal(), n=clients.length, panier=n?Math.round(total/n):0, weighted=pipelineWeighted();
+  document.getElementById('clientStats').innerHTML=[
+    {n:fmtEur(total),l:'CA signé total',c:'var(--green)'},
+    {n:fmtEur(mrr),l:'dont MRR (mensuel)',c:'var(--violet)'},
+    {n:n,l:'Clients',c:'var(--blue)'},
+    {n:fmtEur(panier),l:'Panier moyen',c:'var(--text)'},
+    {n:fmtEur(weighted),l:'Pipeline pondéré',c:'var(--amber)'}
+  ].map(s=>`<div class="kpi"><div class="num" style="color:${s.c};font-size:22px">${s.n}</div><div class="lbl">${s.l}</div></div>`).join('');
+  const tb=document.getElementById('clientsBody');
+  document.getElementById('clientsEmpty').style.display=n?'none':'block';
+  tb.innerHTML=clients.map(p=>`<tr>
+    <td><div class="cell-name">${esc(p.nom)}</div><div class="cell-sub">${esc(p.ville||'')}</div></td>
+    <td class="hide-sm">${p.contactNom?esc(p.contactNom):'—'}</td>
+    <td class="hide-sm">${p.owner?`<span class="avatar sm" title="${esc(p.owner)}">${initials(p.owner)}</span>`:'—'}</td>
+    <td><span class="badge" style="background:var(--violet-soft);color:var(--violet)">${esc(p.dealRecurrence||'Ponctuel')}</span></td>
+    <td style="text-align:right;font-weight:800">${fmtEur(p.dealValue)}</td>
+    <td class="hide-sm">${esc(p.clientSince||'—')}</td>
+    <td><button class="icon-btn" title="Ouvrir" onclick="openDetail('${p.id}')">✏️</button></td></tr>`).join('');
+  renderClientCharts(clients);
+}
+function renderClientCharts(clients){
+  if(typeof Chart==='undefined') return;
+  destroyCharts();
+  const owners=USERS.map(u=>u.name);
+  const caByOwner=owners.map(o=>clients.filter(p=>p.owner===o).reduce((s,p)=>s+(+p.dealValue||0),0));
+  const unassigned=clients.filter(p=>!p.owner).reduce((s,p)=>s+(+p.dealValue||0),0);
+  CHARTS.caOwner=new Chart(document.getElementById('chCaOwner'),{type:'bar',data:{labels:owners.concat(['Non attribué']),datasets:[{data:caByOwner.concat([unassigned]),backgroundColor:owners.map((o,i)=>PALETTE[i%PALETTE.length]).concat(['#cbd5e1']),borderRadius:6}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true}}}});
+  const months=[],vals=[]; const now=new Date();
+  for(let i=5;i>=0;i--){ const d=new Date(now.getFullYear(),now.getMonth()-i,1); const key=d.getFullYear()+'-'+String(d.getMonth()+1).padStart(2,'0'); months.push(d.toLocaleDateString('fr-FR',{month:'short',year:'2-digit'})); vals.push(clients.filter(p=>(p.clientSince||'').slice(0,7)===key).reduce((s,p)=>s+(+p.dealValue||0),0)); }
+  CHARTS.caMonth=new Chart(document.getElementById('chCaMonth'),{type:'bar',data:{labels:months,datasets:[{data:vals,backgroundColor:'#16a34a',borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true}}}});
+}
+
+/* ═══════════════ Accueil ═══════════════ */
+function contactsThisWeek(user){
+  const ws=weekStartISO(); let n=0;
+  DATA.forEach(p=>p.history.forEach(h=>{ if((h.kind==='mail'||h.kind==='appel'||h.kind==='rdv') && h.user===user && isoDate(h.ts)>=ws) n++; }));
+  return n;
+}
+function renderHome(){
+  const due=DATA.filter(relanceDue).sort((a,b)=>a.relanceDate.localeCompare(b.relanceDate));
+  const hot=DATA.filter(p=>p.statut==='En discussion');
+  const myTasks=[]; DATA.forEach(p=>p.tasks.forEach(t=>{ if(!t.done && t.user===currentUser) myTasks.push({p,t}); }));
+  myTasks.sort((a,b)=>(a.t.due||'9999').localeCompare(b.t.due||'9999'));
+  const goal=SETTINGS.weeklyGoal||10, done=contactsThisWeek(currentUser), pct=Math.min(100,goal?done/goal*100:0);
+  const won=DATA.filter(p=>p.statut==='Gagné').length;
+  const li=(p,right)=>`<div class="list-item" onclick="openDetail('${p.id}')">
+      <span class="badge ${typeBadge(p.type)}">${typeShort(p.type)}</span>
+      <div class="li-main"><div class="li-name">${esc(p.nom)}</div><div class="li-sub">${esc(p.ville||'')}${p.owner?' · '+esc(p.owner):''}</div></div>${right||''}</div>`;
+  document.getElementById('view-home').innerHTML=`
+    <div class="hello">Bonjour ${esc(currentUser)} 👋</div>
+    <div class="hello-sub">${due.length} relance(s) à faire · ${hot.length} prospect(s) en discussion · ${myTasks.length} tâche(s) en attente</div>
+    <div class="kpis">
+      <div class="kpi"><div class="num" style="color:var(--red)">${due.length}</div><div class="lbl">Relances à faire</div></div>
+      <div class="kpi"><div class="num" style="color:var(--violet)">${hot.length}</div><div class="lbl">En discussion</div></div>
+      <div class="kpi"><div class="num" style="color:var(--green)">${won}</div><div class="lbl">Gagnés</div></div>
+      <div class="kpi"><div class="num" style="color:var(--blue)">${done}/${goal}</div><div class="lbl">Mes contacts cette semaine</div>
+        <div class="bar"><span style="width:${pct}%;background:var(--blue)"></span></div></div>
+    </div>
+    <div class="cols home">
+      <div class="panel"><h3>⏰ Relances à faire <span class="count">${due.length}</span></h3>
+        ${due.length?due.slice(0,8).map(p=>li(p,`<span class="pill" style="background:var(--red-soft);color:var(--red)">${fmtDate(p.relanceDate)}</span>`)).join(''):'<div class="li-sub">Aucune relance en attente 🎉</div>'}</div>
+      <div class="panel"><h3>✅ Mes tâches <span class="count">${myTasks.length}</span></h3>
+        ${myTasks.length?myTasks.slice(0,8).map(({p,t})=>`<div class="list-item" onclick="openDetail('${p.id}','taches')">
+            <input type="checkbox" onclick="event.stopPropagation();toggleTask('${p.id}','${t.id}')"/>
+            <div class="li-main"><div class="li-name">${esc(t.label)}</div><div class="li-sub">${esc(p.nom)}</div></div>
+            ${t.due?`<span class="pill" style="background:${t.due<=todayISO()?'var(--red-soft);color:var(--red)':'var(--gray-soft);color:var(--muted)'}">${fmtDate(t.due)}</span>`:''}</div>`).join(''):'<div class="li-sub">Aucune tâche en attente.</div>'}</div>
+    </div>
+    <div class="cols home" style="margin-top:14px">
+      <div class="panel"><h3>🔥 Prospects en discussion <span class="count">${hot.length}</span></h3>
+        ${hot.length?hot.slice(0,8).map(p=>li(p,`<span class="pill" style="background:var(--violet-soft);color:var(--violet)">${esc(p.prio)}</span>`)).join(''):'<div class="li-sub">Rien en discussion pour le moment.</div>'}</div>
+      <div class="panel"><h3>🎯 Objectif hebdo de l'équipe</h3>
+        ${USERS.map(u=>{ const d=contactsThisWeek(u.name),pc=Math.min(100,goal?d/goal*100:0);
+          return `<div class="goal-wrap"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span>${esc(u.name)}</span><span style="color:var(--muted)">${d}/${goal}</span></div><div class="goal-bar"><span style="width:${pc}%"></span></div></div>`; }).join('')}
+        <div class="note-hint" style="margin-top:10px">Contacts (mail/appel/RDV) enregistrés cette semaine. Objectif réglable dans ⚙️.</div></div>
+    </div>`;
+}
+
+/* ═══════════════ KPIs prospects ═══════════════ */
+function renderKPIs(){
+  const total=DATA.length, counts={}; STATUSES.forEach(s=>counts[s.k]=0);
+  DATA.forEach(p=>counts[p.statut]=(counts[p.statut]||0)+1);
+  const inplay=counts['Contacté']+counts['Relancé']+counts['En discussion'], dueCount=DATA.filter(relanceDue).length;
+  const cards=[
+    {num:total,lbl:'Prospects',col:'var(--violet)',pct:100},
+    {num:counts['À contacter'],lbl:'À contacter',col:'var(--muted)',pct:total?counts['À contacter']/total*100:0},
+    {num:inplay,lbl:'En cours',col:'var(--blue)',pct:total?inplay/total*100:0},
+    {num:dueCount,lbl:'Relances à faire',col:'var(--red)',pct:total?dueCount/total*100:0},
+    {num:counts['En discussion'],lbl:'En discussion',col:'var(--violet)',pct:total?counts['En discussion']/total*100:0},
+    {num:counts['Gagné'],lbl:'Gagnés',col:'var(--green)',pct:total?counts['Gagné']/total*100:0},
+    {num:fmtEur(caSigne()),lbl:'CA signé',col:'var(--green)',pct:100}
+  ];
+  document.getElementById('kpis').innerHTML=cards.map(c=>`<div class="kpi"><div class="num" style="color:${c.col}">${c.num}</div><div class="lbl">${c.lbl}</div><div class="bar"><span style="width:${c.pct}%;background:${c.col}"></span></div></div>`).join('');
+}
+
+/* ═══════════════ Table prospects ═══════════════ */
+function setType(b){ activeType=b.dataset.type; document.querySelectorAll('#typeSeg button').forEach(x=>x.classList.toggle('active',x===b)); render(); }
+function setType2(b){ activeType2=b.dataset.type; document.querySelectorAll('#typeSeg2 button').forEach(x=>x.classList.toggle('active',x===b)); renderKanban(); }
+function getFiltered(){
+  const q=document.getElementById('search').value.trim().toLowerCase();
+  const st=document.getElementById('fStatus').value, pr=document.getElementById('fPrio').value, sort=document.getElementById('fSort').value;
+  let rows=DATA.filter(p=>{
+    if(activeType&&p.type!==activeType)return false;
+    if(mineOnly&&p.owner!==currentUser)return false;
+    if(targetOnly&&!isSmallTarget(p))return false;
+    if(relanceOnly&&!relanceDue(p))return false;
+    if(st&&p.statut!==st)return false;
+    if(pr&&p.prio!==pr)return false;
+    if(q){ const h=(p.nom+' '+p.ville+' '+p.segment+' '+p.type).toLowerCase(); if(!h.includes(q))return false; }
+    return true;
+  });
+  const prioRank={Haute:0,Moyenne:1,Basse:2}, statRank={}; STATUSES.forEach((s,i)=>statRank[s.k]=i);
+  rows.sort((a,b)=>{
+    if(sort==='nom')return a.nom.localeCompare(b.nom);
+    if(sort==='ville')return (a.ville||'').localeCompare(b.ville||'');
+    if(sort==='relance'){ const ra=relancePending(a)?a.relanceDate:'9999',rb=relancePending(b)?b.relanceDate:'9999'; return ra.localeCompare(rb)||a.nom.localeCompare(b.nom); }
+    if(sort==='statut')return statRank[a.statut]-statRank[b.statut]||a.nom.localeCompare(b.nom);
+    return (isSmallTarget(b)-isSmallTarget(a))||prioRank[a.prio]-prioRank[b.prio]||a.nom.localeCompare(b.nom);
+  });
+  return rows;
+}
+function statusOptions(sel){ return STATUSES.map(s=>`<option ${s.k===sel?'selected':''}>${s.k}</option>`).join(''); }
+function render(){
+  renderKPIs(); populateStatusFilter();
+  const rows=getFiltered(), tb=document.getElementById('tbody');
+  document.getElementById('empty').style.display=rows.length?'none':'block';
+  tb.innerHTML=rows.map(p=>{ const sm=statusMeta(p.statut); return `<tr>
+    <td><div class="cell-name">${isSmallTarget(p)?'<span title="Petite ESN — cible prioritaire">🎯 </span>':''}${esc(p.nom)}</div><div class="cell-sub">${esc(p.segment||'')}</div>
+      ${p.contactNom?`<div class="cell-sub" style="color:var(--violet);font-weight:600">👤 ${esc(p.contactNom)}${p.contactRole?' · '+esc(p.contactRole):''}</div>`:''}
+      ${relancePending(p)?`<div class="cell-sub" style="color:${relanceDue(p)?'var(--red)':'var(--amber)'};font-weight:700">⏰ Relance ${relanceDue(p)?'à faire':'le'} ${fmtDate(p.relanceDate)}</div>`:''}</td>
+    <td><span class="badge ${typeBadge(p.type)}">${typeShort(p.type)}</span></td>
+    <td class="hide-sm">${esc(p.ville||'—')}</td>
+    <td class="hide-sm"><span class="prio"><span class="dot" style="background:${PRIO_DOT[p.prio]}"></span>${esc(p.prio)}</span></td>
+    <td><select class="statusSel" style="color:${sm.c};background:${sm.bg}" onchange="changeStatus('${p.id}',this.value)">${statusOptions(p.statut)}</select></td>
+    <td class="hide-sm">${p.owner?`<span class="avatar sm" title="${esc(p.owner)}">${initials(p.owner)}</span>`:`<span class="avatar sm muted" title="Non attribué">–</span>`}</td>
+    <td><div class="row-actions">
+      <button class="icon-btn" title="Ouvrir" onclick="openDetail('${p.id}')">✉️</button>
+      <button class="icon-btn" title="Modifier" onclick="openEdit('${p.id}')">✏️</button>
+      ${p.site?`<a class="icon-btn" title="Ouvrir le site" href="${esc(p.site)}" target="_blank" rel="noopener" style="text-decoration:none">🌐</a>`:`<span class="icon-btn" style="opacity:.25;cursor:default">🌐</span>`}</div></td></tr>`; }).join('');
+}
+function populateStatusFilter(){ const sel=document.getElementById('fStatus'); if(sel.dataset.done)return; STATUSES.forEach(s=>{ const o=document.createElement('option'); o.textContent=s.k; sel.appendChild(o); }); sel.dataset.done='1'; }
+function changeStatus(id,val){
+  const p=DATA.find(x=>x.id===id); if(!p)return; const old=p.statut; p.statut=val;
+  if(val!=='À contacter'){ if(!p.dernierContact)p.dernierContact=todayISO(); if(!p.owner)p.owner=currentUser; }
+  if(val==='Gagné'||val==='Perdu')p.relanceDate=''; else if(val==='Relancé')scheduleRelance(p);
+  if(val==='Gagné'){
+    if(!p.clientSince)p.clientSince=todayISO();
+    if(!p.dealValue){ const v=prompt('🎉 '+p.nom+' passe client !\nMontant du deal (€ HT) :',''); const n=parseInt((v||'').replace(/[^0-9]/g,'')); if(n){ p.dealValue=n; logActivity(p,'note','Deal signé : '+fmtEur(n)); } }
+  }
+  if(old!==val) logActivity(p,'statut','Statut : '+old+' → '+val);
+  save(); refreshAll();
+}
+
+/* ═══════════════ Pipeline Kanban ═══════════════ */
+function renderKanban(){
+  const k=document.getElementById('kanban');
+  const rows=DATA.filter(p=>(!activeType2||p.type===activeType2)&&(!mineOnly||p.owner===currentUser));
+  k.innerHTML=STATUSES.map(s=>{
+    const items=rows.filter(p=>p.statut===s.k);
+    return `<div class="kcol">
+      <div class="kcol-head" style="color:${s.c}"><span class="dot" style="background:${s.hex}"></span>${s.k}<span class="cnt">${items.length}</span></div>
+      <div class="kcol-body" data-status="${esc(s.k)}" ondragover="kDragOver(event)" ondragleave="kDragLeave(event)" ondrop="kDrop(event)">
+        ${items.map(p=>`<div class="kcard" draggable="true" ondragstart="kDragStart(event,'${p.id}')" ondragend="kDragEnd(event)" onclick="openDetail('${p.id}')">
+          <div class="kc-top"><div class="kc-name">${esc(p.nom)}</div><span class="badge ${typeBadge(p.type)}">${typeShort(p.type)}</span></div>
+          <div class="kc-sub">${esc(p.ville||'')}</div>
+          <div class="kc-foot">
+            <span class="prio"><span class="dot" style="background:${PRIO_DOT[p.prio]}"></span>${esc(p.prio)}</span>
+            ${relancePending(p)?`<span class="kc-sub" style="color:${relanceDue(p)?'var(--red)':'var(--amber)'};font-weight:700">⏰ ${fmtDate(p.relanceDate)}</span>`:''}
+            <span style="margin-left:auto">${p.owner?`<span class="avatar sm" title="${esc(p.owner)}">${initials(p.owner)}</span>`:''}</span>
+          </div></div>`).join('')}
+      </div></div>`;
+  }).join('');
+}
+let dragId=null;
+function kDragStart(e,id){ dragId=id; e.currentTarget.classList.add('dragging'); e.dataTransfer.effectAllowed='move'; try{e.dataTransfer.setData('text/plain',id);}catch(x){} }
+function kDragEnd(e){ e.currentTarget.classList.remove('dragging'); }
+function kDragOver(e){ e.preventDefault(); e.currentTarget.classList.add('drag-over'); }
+function kDragLeave(e){ e.currentTarget.classList.remove('drag-over'); }
+function kDrop(e){ e.preventDefault(); e.currentTarget.classList.remove('drag-over'); const st=e.currentTarget.dataset.status; const id=dragId||e.dataTransfer.getData('text/plain'); if(id&&st){ changeStatus(id,st); } dragId=null; }
+
+/* ═══════════════ Analytics ═══════════════ */
+const PALETTE=['#6c47ff','#2563eb','#16a34a','#d97706','#dc2626','#be185d','#0891b2','#7c3aed','#65a30d','#db2777'];
+let CHARTS={};
+function destroyCharts(){ Object.values(CHARTS).forEach(c=>{try{c.destroy();}catch(e){}}); CHARTS={}; }
+function renderAnalytics(){
+  if(typeof Chart==='undefined'){ document.getElementById('statCards').innerHTML='<div class="panel">Graphiques indisponibles (Chart.js non chargé).</div>'; return; }
+  const total=DATA.length, contacted=DATA.filter(p=>p.statut!=='À contacter').length;
+  const won=DATA.filter(p=>p.statut==='Gagné').length, lost=DATA.filter(p=>p.statut==='Perdu').length;
+  const engaged=DATA.filter(p=>['En discussion','Gagné'].includes(p.statut)).length;
+  const repRate=contacted?Math.round(engaged/contacted*100):0, winRate=contacted?Math.round(won/contacted*100):0;
+  document.getElementById('statCards').innerHTML=[
+    {n:contacted+'/'+total,l:'Prospects contactés',c:'var(--blue)'},
+    {n:repRate+'%',l:'Taux d\'engagement',c:'var(--violet)'},
+    {n:winRate+'%',l:'Taux de conversion',c:'var(--green)'},
+    {n:won,l:'Gagnés',c:'var(--green)'},
+    {n:lost,l:'Perdus',c:'var(--red)'}
+  ].map(s=>`<div class="kpi"><div class="num" style="color:${s.c}">${s.n}</div><div class="lbl">${s.l}</div></div>`).join('');
+  destroyCharts();
+  const stCounts=STATUSES.map(s=>DATA.filter(p=>p.statut===s.k).length);
+  CHARTS.status=new Chart(document.getElementById('chStatus'),{type:'bar',data:{labels:STATUSES.map(s=>s.k),datasets:[{data:stCounts,backgroundColor:STATUSES.map(s=>s.hex),borderRadius:6}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+  const types=['ESN','Cabinet de recrutement','Recruteur indépendant'], tCounts=types.map(t=>DATA.filter(p=>p.type===t).length);
+  CHARTS.type=new Chart(document.getElementById('chType'),{type:'doughnut',data:{labels:['ESN','Cabinets','Indé'],datasets:[{data:tCounts,backgroundColor:['#6c47ff','#2563eb','#be185d']}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{position:'bottom'}}}});
+  const owners=USERS.map(u=>u.name); const oCounts=owners.map(o=>DATA.filter(p=>p.owner===o).length); const unassigned=DATA.filter(p=>!p.owner).length;
+  CHARTS.owner=new Chart(document.getElementById('chOwner'),{type:'bar',data:{labels:owners.concat(['Non attribué']),datasets:[{data:oCounts.concat([unassigned]),backgroundColor:owners.map((o,i)=>PALETTE[i%PALETTE.length]).concat(['#cbd5e1']),borderRadius:6}]},options:{indexAxis:'y',responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{x:{beginAtZero:true,ticks:{precision:0}}}}});
+  const days=[],dayCounts=[]; for(let i=13;i>=0;i--){ const d=new Date(); d.setDate(d.getDate()-i); const iso=isoDate(d); days.push(fmtDate(iso)); let n=0; DATA.forEach(p=>p.history.forEach(h=>{ if(isoDate(h.ts)===iso)n++; })); dayCounts.push(n); }
+  CHARTS.activity=new Chart(document.getElementById('chActivity'),{type:'line',data:{labels:days,datasets:[{data:dayCounts,borderColor:'#6c47ff',backgroundColor:'rgba(108,71,255,.12)',fill:true,tension:.35,pointRadius:2}]},options:{responsive:true,maintainAspectRatio:false,plugins:{legend:{display:false}},scales:{y:{beginAtZero:true,ticks:{precision:0}}}}});
+}
+
+/* ═══════════════ Détail (Infos / Historique / Tâches / E-mail) ═══════════════ */
+let currentId=null;
+function openDetail(id,pane){
+  const p=DATA.find(x=>x.id===id); if(!p)return; currentId=id; pane=pane||'infos';
+  const tmplOpts=SETTINGS.templates.map((t,i)=>`<option value="${i}">${esc(t.name)}</option>`).join('');
+  const firstT=SETTINGS.templates[0];
+  const hist=p.history.length?`<div class="timeline">${p.history.map(h=>`<div class="tl-item k-${h.kind}"><div class="tl-when">${fmtDateTime(h.ts)} · ${esc(h.user)} · ${KIND_LBL[h.kind]||''}</div><div class="tl-text">${esc(h.text)}</div></div>`).join('')}</div>`:'<div class="li-sub">Aucune activité enregistrée.</div>';
+  const tasks=p.tasks.length?p.tasks.map(t=>`<div class="task ${t.done?'done':''}"><input type="checkbox" ${t.done?'checked':''} onclick="toggleTask('${p.id}','${t.id}')"/><div class="task-label">${esc(t.label)}</div>${t.due?`<span class="task-due" style="color:${!t.done&&t.due<=todayISO()?'var(--red)':'var(--muted)'}">${fmtDate(t.due)}</span>`:''}<button class="icon-btn" style="width:26px;height:26px" onclick="delTask('${p.id}','${t.id}')">🗑</button></div>`).join(''):'<div class="li-sub">Aucune tâche.</div>';
+  document.getElementById('detailModal').innerHTML=`
+    <div class="modal-head"><div><h3>${esc(p.nom)}</h3>
+      <div class="sub"><span class="badge ${typeBadge(p.type)}">${typeShort(p.type)}</span> · ${esc(p.segment||'')}</div></div>
+      <button class="close" onclick="closeModal('detailOverlay')">×</button></div>
+    <div class="modal-body">
+      <div class="dtabs">
+        <button data-p="infos" onclick="detailTab('infos')">Infos</button>
+        <button data-p="historique" onclick="detailTab('historique')">Historique (${p.history.length})</button>
+        <button data-p="taches" onclick="detailTab('taches')">Tâches (${p.tasks.filter(t=>!t.done).length})</button>
+        <button data-p="email" onclick="detailTab('email')">E-mail</button>
+      </div>
+
+      <div class="dpane" id="pane-infos">
+        <div class="info-row">
+          ${p.ville?`<span class="chip"><b>📍</b> ${esc(p.ville)}</span>`:''}
+          ${p.taille?`<span class="chip"><b>👥</b> ${esc(p.taille)}</span>`:''}
+          ${p.site?`<span class="chip"><b>🔗</b> <a href="${esc(p.site)}" target="_blank">Site web</a></span>`:''}
+          <span class="chip"><b>Resp.</b> ${esc(p.owner||'—')}</span>
+          ${p.contactNom?`<span class="chip" style="color:var(--violet)"><b>👤</b> ${esc(p.contactNom)}${p.contactRole?' — '+esc(p.contactRole):''}${p.contactLinkedin?' · <a href="'+esc(p.contactLinkedin)+'" target="_blank">LinkedIn</a>':''}</span>`:''}
+          ${p.phone?`<span class="chip"><b>☎️ Société</b> <a href="tel:${esc(p.phone)}">${esc(p.phone)}</a></span>`:''}
+          ${p.contactPhone?`<span class="chip"><b>📱 Direct</b> <a href="tel:${esc(p.contactPhone)}">${esc(p.contactPhone)}</a></span>`:''}
+          ${p.dernierContact?`<span class="chip"><b>🕑</b> ${esc(p.dernierContact)}</span>`:''}
+          ${relancePending(p)?`<span class="chip" style="color:${relanceDue(p)?'var(--red)':'var(--amber)'}"><b>⏰</b> Relance ${esc(p.relanceDate)}</span>`:''}
+        </div>
+        <div class="field"><label>Notes / suivi</label><textarea id="dNotes" oninput="liveNote(this.value)">${esc(p.notes||'')}</textarea></div>
+        ${relancePending(p)?`<button class="btn btn-ghost btn-sm" style="color:var(--green)" onclick="clearRelance('${p.id}')">✓ Relance traitée</button>`:''}
+      </div>
+
+      <div class="dpane" id="pane-historique">
+        <div class="mail-box" style="margin-top:0;margin-bottom:14px">
+          <h4>＋ Ajouter une activité</h4>
+          <div class="grid2" style="margin-bottom:8px">
+            <select id="actKind"><option value="appel">Appel</option><option value="rdv">RDV</option><option value="note">Note</option><option value="mail">E-mail</option><option value="autre">Autre</option></select>
+            <input type="text" id="actText" placeholder="Ex : Échange tél. avec le resp. staffing"/>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="addManualActivity('${p.id}')">Enregistrer</button>
+        </div>
+        ${hist}
+      </div>
+
+      <div class="dpane" id="pane-taches">
+        <div class="mail-box" style="margin-top:0;margin-bottom:14px">
+          <h4>＋ Nouvelle tâche</h4>
+          <div class="grid2" style="margin-bottom:8px">
+            <input type="text" id="newTaskLabel" placeholder="Ex : Rappeler la DRH"/>
+            <input type="date" id="newTaskDue"/>
+          </div>
+          <button class="btn btn-primary btn-sm" onclick="addTask('${p.id}')">Ajouter</button>
+        </div>
+        ${tasks}
+      </div>
+
+      <div class="dpane" id="pane-email">
+        <div class="mail-box" style="margin-top:0">
+          <h4>✉️ Préparer un e-mail de prospection</h4>
+          <div class="grid2">
+            <div class="field" style="margin-bottom:10px"><label>E-mail du contact</label>
+              <input type="text" id="dEmail" placeholder="prenom.nom@${(p.site||'').replace(/^https?:\/\/(www\.)?/,'').replace(/\/.*$/,'')||'domaine.com'}" value="${esc(p.email||'')}" oninput="liveEmail(this.value)"/>
+              <div class="note-hint">À récupérer sur le site / LinkedIn.</div></div>
+            <div class="field" style="margin-bottom:10px"><label>Modèle</label><select id="dTmpl" onchange="applyTemplate()">${tmplOpts}</select></div>
+          </div>
+          <div class="field" style="margin-bottom:10px"><label>Objet</label><input type="text" id="dSubject" value="${esc(fillTemplate(firstT.subject,p))}"/></div>
+          <div class="field" style="margin-bottom:4px"><label>Message</label><textarea id="dBody" style="min-height:170px">${esc(fillTemplate(firstT.body,p))}</textarea></div>
+        </div>
+        <div class="modal-foot" style="padding:14px 0 0;border:none">
+          ${p.contactLinkedin?`<a class="btn btn-ghost btn-sm" style="margin-right:auto;color:#0a66c2" href="${esc(p.contactLinkedin)}" target="_blank">in Message LinkedIn</a>`:''}
+          <button class="btn btn-ghost btn-sm" onclick="copyMail()">📋 Copier</button>
+          <button class="btn btn-ghost btn-sm" onclick="openMailto()">↗︎ Ouvrir dans Mail</button>
+          <button class="btn btn-primary btn-sm" onclick="createDraft()">📥 Créer le brouillon Gmail</button>
+        </div>
+      </div>
+    </div>`;
+  document.getElementById('detailOverlay').classList.add('open');
+  detailTab(pane);
+}
+function detailTab(pane){
+  document.querySelectorAll('#detailModal .dtabs button').forEach(b=>b.classList.toggle('active',b.dataset.p===pane));
+  document.querySelectorAll('#detailModal .dpane').forEach(d=>d.classList.toggle('active',d.id==='pane-'+pane));
+}
+function applyTemplate(){ const p=DATA.find(x=>x.id===currentId); if(!p)return; const t=SETTINGS.templates[+document.getElementById('dTmpl').value]; document.getElementById('dSubject').value=fillTemplate(t.subject,p); document.getElementById('dBody').value=fillTemplate(t.body,p); }
+function liveNote(v){ const p=DATA.find(x=>x.id===currentId); if(p){p.notes=v;save();} }
+function liveEmail(v){ const p=DATA.find(x=>x.id===currentId); if(p){p.email=v.trim();save();} }
+function copyMail(){ const s=document.getElementById('dSubject').value,b=document.getElementById('dBody').value; navigator.clipboard.writeText('Objet : '+s+'\n\n'+b).then(()=>toast('E-mail copié')); }
+function openMailto(){ const p=DATA.find(x=>x.id===currentId); const to=document.getElementById('dEmail').value.trim(); const s=encodeURIComponent(document.getElementById('dSubject').value),b=encodeURIComponent(document.getElementById('dBody').value); window.open(`mailto:${to}?subject=${s}&body=${b}`,'_blank'); markContacted(p,'E-mail préparé (client mail) : '+document.getElementById('dSubject').value); toast('Relance programmée le '+fmtDate(p.relanceDate)); }
+async function createDraft(){
+  const p=DATA.find(x=>x.id===currentId); if(!p)return;
+  const to=document.getElementById('dEmail').value.trim(), subject=document.getElementById('dSubject').value, body=document.getElementById('dBody').value;
+  if(!to){ toast("Ajoute l'e-mail du contact d'abord",true); return; }
+  if(!window.cowork||!window.cowork.callMcpTool){ toast('Brouillon Gmail dispo uniquement dans Cowork — utilise « Ouvrir dans Mail »',true); return; }
+  toast('Création du brouillon…');
+  try{
+    const r=await window.cowork.callMcpTool('mcp__557be9fd-f720-4298-ab46-f323201242f5__create_draft',{to:[to],subject,body});
+    if(r&&r.isError){ toast('Erreur Gmail : '+(r.content&&r.content[0]&&r.content[0].text||'inconnue'),true); return; }
+    markContacted(p,'Brouillon Gmail créé : '+subject);
+    toast('✅ Brouillon créé · relance programmée le '+fmtDate(p.relanceDate));
+  }catch(e){ toast('Erreur : '+e.message,true); }
+}
+function markContacted(p,logText){
+  if(p.statut==='À contacter')p.statut='Contacté';
+  if(!p.owner)p.owner=currentUser;
+  p.dernierContact=todayISO(); scheduleRelance(p);
+  logActivity(p,'mail',logText||'E-mail de prospection envoyé');
+  save(); refreshAll();
+}
+
+/* ═══════════════ Ajout / édition ═══════════════ */
+function openEdit(id){
+  const p=id?DATA.find(x=>x.id===id):{nom:'',type:'ESN',segment:'',ville:'',taille:'',site:'',email:'',prio:'Moyenne',statut:'À contacter',notes:'',owner:currentUser};
+  const isNew=!id;
+  document.getElementById('editModal').innerHTML=`
+    <div class="modal-head"><div><h3>${isNew?'Ajouter un prospect':'Modifier'}</h3></div><button class="close" onclick="closeModal('editOverlay')">×</button></div>
+    <div class="modal-body">
+      <div class="field"><label>Nom *</label><input type="text" id="eNom" value="${esc(p.nom)}"/></div>
+      <div class="grid2">
+        <div class="field"><label>Type</label><select id="eType">
+          <option ${p.type==='ESN'?'selected':''}>ESN</option><option ${p.type==='Cabinet de recrutement'?'selected':''}>Cabinet de recrutement</option><option ${p.type==='Recruteur indépendant'?'selected':''}>Recruteur indépendant</option></select></div>
+        <div class="field"><label>Priorité</label><select id="ePrio"><option ${p.prio==='Haute'?'selected':''}>Haute</option><option ${p.prio==='Moyenne'?'selected':''}>Moyenne</option><option ${p.prio==='Basse'?'selected':''}>Basse</option></select></div>
+      </div>
+      <div class="field"><label>Segment / spécialité</label><input type="text" id="eSeg" value="${esc(p.segment)}"/></div>
+      <div class="grid2"><div class="field"><label>Ville</label><input type="text" id="eVille" value="${esc(p.ville)}"/></div>
+        <div class="field"><label>Taille</label><input type="text" id="eTaille" value="${esc(p.taille)}"/></div></div>
+      <div class="grid2"><div class="field"><label>Site web</label><input type="text" id="eSite" value="${esc(p.site)}"/></div>
+        <div class="field"><label>E-mail du contact</label><input type="text" id="eEmail" value="${esc(p.email)}"/></div></div>
+      <div class="grid2"><div class="field"><label>Contact (nom)</label><input type="text" id="eCNom" value="${esc(p.contactNom)}"/></div>
+        <div class="field"><label>Poste du contact</label><input type="text" id="eCRole" value="${esc(p.contactRole)}"/></div></div>
+      <div class="grid2"><div class="field"><label>Tél. société (standard)</label><input type="text" id="ePhone" value="${esc(p.phone)}"/></div>
+        <div class="field"><label>Tél. direct du contact</label><input type="text" id="eCPhone" value="${esc(p.contactPhone)}"/></div></div>
+      <div class="field"><label>LinkedIn du contact</label><input type="text" id="eCLink" value="${esc(p.contactLinkedin)}"/></div>
+      <div class="field"><label>Commercial responsable</label><select id="eOwner"><option value="">— Non attribué —</option>${USERS.map(u=>`<option ${p.owner===u.name?'selected':''}>${esc(u.name)}</option>`).join('')}</select></div>
+      <div class="grid2">
+        <div class="field"><label>Montant du deal (€ HT)</label><input type="number" id="eDeal" value="${p.dealValue||''}" placeholder="0"/></div>
+        <div class="field"><label>Récurrence du CA</label><select id="eRec">
+          <option ${p.dealRecurrence==='Ponctuel'?'selected':''}>Ponctuel</option>
+          <option ${p.dealRecurrence==='Mensuel (MRR)'?'selected':''}>Mensuel (MRR)</option>
+          <option ${p.dealRecurrence==='Annuel'?'selected':''}>Annuel</option>
+        </select></div>
+      </div>
+      ${p.clientSince?`<div class="note-hint" style="margin:-6px 0 12px">🤝 Client depuis le ${esc(p.clientSince)}</div>`:''}
+      <div class="field"><label>Notes</label><textarea id="eNotes">${esc(p.notes)}</textarea></div>
+    </div>
+    <div class="modal-foot">
+      ${isNew?'':`<button class="btn btn-ghost btn-sm" style="color:var(--red);margin-right:auto" onclick="delProspect('${id}')">🗑 Supprimer</button>`}
+      <button class="btn btn-ghost btn-sm" onclick="closeModal('editOverlay')">Annuler</button>
+      <button class="btn btn-primary btn-sm" onclick="saveEdit(${isNew?'null':"'"+id+"'"})">Enregistrer</button>
+    </div>`;
+  document.getElementById('editOverlay').classList.add('open');
+}
+function saveEdit(id){
+  const v=k=>document.getElementById(k).value; const nom=v('eNom').trim(); if(!nom){ toast('Le nom est obligatoire',true); return; }
+  const obj={nom,type:v('eType'),prio:v('ePrio'),segment:v('eSeg').trim(),ville:v('eVille').trim(),taille:v('eTaille').trim(),site:v('eSite').trim(),email:v('eEmail').trim(),owner:v('eOwner'),contactNom:v('eCNom').trim(),contactRole:v('eCRole').trim(),contactLinkedin:v('eCLink').trim(),phone:v('ePhone').trim(),contactPhone:v('eCPhone').trim(),dealValue:parseInt(v('eDeal'))||0,dealRecurrence:v('eRec'),notes:v('eNotes').trim()};
+  if(id){ Object.assign(DATA.find(x=>x.id===id),obj); }
+  else{ const np=normalize(Object.assign({id:'p'+Date.now(),statut:'À contacter',dernierContact:'',relanceDate:''},obj)); logActivity(np,'note','Prospect créé'); DATA.unshift(np); }
+  save(); closeModal('editOverlay'); refreshAll(); toast('Enregistré');
+}
+function delProspect(id){ if(!confirm('Supprimer ce prospect ?'))return; DATA=DATA.filter(x=>x.id!==id); save(); closeModal('editOverlay'); refreshAll(); toast('Prospect supprimé'); }
+
+/* ═══════════════ Réglages ═══════════════ */
+function openSettings(){
+  const tmpl=SETTINGS.templates.map((t,i)=>`<div class="field" style="border:1px solid var(--border);border-radius:10px;padding:11px">
+    <label>Modèle ${i+1} — nom</label><input type="text" id="tName${i}" value="${esc(t.name)}" style="margin-bottom:8px"/>
+    <label>Objet</label><input type="text" id="tSub${i}" value="${esc(t.subject)}" style="margin-bottom:8px"/>
+    <label>Corps</label><textarea id="tBody${i}" style="min-height:120px">${esc(t.body)}</textarea></div>`).join('');
+  document.getElementById('setModal').innerHTML=`
+    <div class="modal-head"><div><h3>⚙️ Réglages</h3><div class="sub">Signature, objectif et modèles · variables : {nom} {ville} {type} {signature}</div></div><button class="close" onclick="closeModal('setOverlay')">×</button></div>
+    <div class="modal-body">
+      <div class="grid2"><div class="field"><label>Expéditeur</label><input type="text" id="sSender" value="${esc(SETTINGS.sender)}"/></div>
+        <div class="field"><label>Société</label><input type="text" id="sCompany" value="${esc(SETTINGS.company)}"/></div></div>
+      <div class="field"><label>Objectif de contacts par commercial / semaine</label><input type="number" id="sGoal" value="${SETTINGS.weeklyGoal}" min="1"/></div>
+      <div class="field"><label>Signature</label><textarea id="sSign" style="min-height:80px">${esc(SETTINGS.signature)}</textarea></div>
+      <div class="field"><label style="margin-bottom:8px">Modèles d'e-mail</label><div style="display:flex;flex-direction:column;gap:10px">${tmpl}</div></div>
+    </div>
+    <div class="modal-foot">
+      <button class="btn btn-ghost btn-sm" style="margin-right:auto" onclick="closeModal('setOverlay');openUsers()">👥 Commerciaux</button>
+      <button class="btn btn-ghost btn-sm" onclick="resetSettings()">Réinitialiser</button>
+      <button class="btn btn-primary btn-sm" onclick="saveSet()">Enregistrer</button>
+    </div>`;
+  document.getElementById('setOverlay').classList.add('open');
+}
+function saveSet(){
+  SETTINGS.sender=document.getElementById('sSender').value; SETTINGS.company=document.getElementById('sCompany').value;
+  SETTINGS.weeklyGoal=Math.max(1,parseInt(document.getElementById('sGoal').value)||10);
+  SETTINGS.signature=document.getElementById('sSign').value;
+  SETTINGS.templates=SETTINGS.templates.map((t,i)=>({name:document.getElementById('tName'+i).value,subject:document.getElementById('tSub'+i).value,body:document.getElementById('tBody'+i).value}));
+  saveSettings(); closeModal('setOverlay'); refreshAll(); toast('Réglages enregistrés');
+}
+function resetSettings(){ if(confirm('Réinitialiser signature, objectif et modèles ?')){ SETTINGS=JSON.parse(JSON.stringify(DEFAULT_SETTINGS)); saveSettings(); openSettings(); } }
+
+/* ═══════════════ Export ═══════════════ */
+function exportCSV(){
+  const cols=['nom','type','segment','ville','taille','statut','prio','owner','contactNom','contactRole','email','contactPhone','phone','contactLinkedin','site','dealValue','dealRecurrence','clientSince','dernierContact','relanceDate','notes'];
+  const head=cols.join(';');
+  const lines=DATA.map(p=>cols.map(c=>'"'+String(p[c]==null?'':p[c]).replace(/"/g,'""')+'"').join(';'));
+  const csv='﻿'+head+'\n'+lines.join('\n');
+  const a=document.createElement('a'); a.href=URL.createObjectURL(new Blob([csv],{type:'text/csv;charset=utf-8'})); a.download='skilldeck-prospection.csv'; a.click(); toast('Export CSV téléchargé');
+}
+
+function closeModal(id){ document.getElementById(id).classList.remove('open'); }
+document.addEventListener('keydown',e=>{ if(e.key==='Escape') document.querySelectorAll('.overlay.open').forEach(o=>o.classList.remove('open')); });
+
+/* ═══════════════ Init ═══════════════ */
+loadSettings();
+(async()=>{ await initAuth(); applyTheme(localStorage.getItem('skilldeck_theme')||'light'); })();
+if('serviceWorker' in navigator && SYNC){ navigator.serviceWorker.register('/sw.js').catch(()=>{}); }
+</script>
+</body>
+</html>
