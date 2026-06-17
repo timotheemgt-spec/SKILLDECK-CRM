@@ -229,23 +229,59 @@ tbody tr:hover{background:var(--panel-tint);box-shadow:inset 2px 0 0 var(--viole
 .task-label{flex:1;font-size:13px}
 .task-due{font-size:11px;font-weight:700;font-family:var(--mono)}
 
-/* Login */
-.login-screen{position:fixed;inset:0;z-index:200;display:flex;align-items:center;justify-content:center;padding:20px;
-  background:
-   radial-gradient(900px 600px at 78% 12%, rgba(108,71,255,.34), transparent 58%),
-   radial-gradient(760px 520px at 12% 92%, rgba(37,99,235,.28), transparent 55%),
-   linear-gradient(150deg,#100d1e,#15132e 55%,#0c0a18);}
-.login-screen::after{content:'';position:absolute;inset:0;opacity:.5;pointer-events:none;
-  background-image:radial-gradient(rgba(255,255,255,.05) 1px,transparent 1px);background-size:4px 4px}
-.login-card{position:relative;background:var(--card);border-radius:22px;box-shadow:0 40px 90px rgba(0,0,0,.5);width:100%;max-width:392px;padding:34px 30px;animation:pop .3s ease;border:1px solid rgba(255,255,255,.5)}
-.login-card .logo{width:46px;height:46px;border-radius:13px;display:flex;align-items:center;justify-content:center;font-family:var(--display);font-weight:800;font-size:22px;color:#fff;background:linear-gradient(140deg,#7c5cff,#5a37e0 60%,#3f6ae0);box-shadow:0 10px 26px rgba(108,71,255,.45);margin-bottom:18px}
-.login-card h2{font-family:var(--display);font-size:22px;font-weight:800;letter-spacing:-.4px}
-.login-card p{font-size:13px;color:var(--muted);margin:5px 0 24px}
+/* Login — split screen */
+.login-screen{position:fixed;inset:0;z-index:200;display:grid;grid-template-columns:1.05fr .95fr;background:#f6f5fb}
+/* left brand panel */
+.login-brand{position:relative;overflow:hidden;color:#fff;display:flex;flex-direction:column;padding:48px 52px;
+  background:linear-gradient(150deg,#0b0a1f 0%,#160f3a 40%,#241258 72%,#341a7a 100%)}
+.login-brand::before{content:'';position:absolute;width:560px;height:560px;border-radius:50%;top:-200px;right:-160px;
+  background:radial-gradient(circle at center,rgba(37,99,235,.32),transparent 70%)}
+.login-brand::after{content:'';position:absolute;width:460px;height:460px;border-radius:50%;bottom:-170px;left:-130px;
+  background:radial-gradient(circle at center,rgba(168,85,247,.30),transparent 70%)}
+.lb-logo{display:flex;align-items:center;gap:14px;position:relative;z-index:2}
+.lb-logo .mark{width:52px;height:52px;display:grid;place-items:center;filter:drop-shadow(0 8px 18px rgba(124,58,237,.45))}
+.lb-logo .word b{font-family:var(--display);font-size:21px;font-weight:800;letter-spacing:-.4px}
+.lb-logo .word b span{color:#c4b5fd}
+.lb-logo .word small{display:block;font-size:11.5px;font-weight:700;letter-spacing:2.5px;opacity:.6;margin-top:1px}
+.lb-hero{position:relative;z-index:2;margin-top:48px;max-width:440px}
+.lb-hero h1{font-family:var(--display);font-size:35px;line-height:1.16;font-weight:800;letter-spacing:-.9px}
+.lb-hero h1 em{font-style:normal;background:linear-gradient(90deg,#c4b5fd,#93c5fd);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.lb-hero p{margin-top:16px;font-size:15px;line-height:1.6;color:#cfc9f2}
+.lb-stats{position:relative;z-index:2;display:flex;gap:32px;margin-top:30px}
+.lb-stats .s b{display:block;font-family:var(--display);font-size:27px;font-weight:800;letter-spacing:-.5px}
+.lb-stats .s span{font-size:12.5px;color:#b3a9e0;font-weight:500}
+.lb-prev{position:relative;z-index:2;margin-top:40px;background:rgba(255,255,255,.07);border:1px solid rgba(196,181,253,.22);border-radius:18px;padding:16px;backdrop-filter:blur(8px)}
+.lb-prev .top{display:flex;gap:10px;margin-bottom:14px}
+.lb-prev .kpi{flex:1;background:rgba(255,255,255,.08);border:1px solid rgba(196,181,253,.16);border-radius:12px;padding:11px 12px}
+.lb-prev .kpi span{font-size:11px;color:#b3a9e0;font-weight:500}
+.lb-prev .kpi b{display:block;font-family:var(--display);font-size:18px;font-weight:800;margin-top:3px}
+.lb-bars{display:flex;align-items:flex-end;gap:9px;height:74px;padding:4px 2px 0}
+.lb-bars i{flex:1;background:linear-gradient(180deg,#8b7cf6,#6d28d9);border-radius:5px 5px 0 0;opacity:.7}
+.lb-bars i.hot{background:linear-gradient(180deg,#c4b5fd,#7c3aed);opacity:1}
+.lb-foot{display:flex;justify-content:space-between;margin-top:10px;font-size:11px;color:#b3a9e0;font-weight:500}
+.lb-trust{position:relative;z-index:2;margin-top:auto;padding-top:28px;font-size:12.5px;color:#b3a9e0;font-weight:500;display:flex;align-items:center;gap:8px}
+.lb-trust svg{width:15px;height:15px;flex:none}
+/* right form panel */
+.login-right{display:flex;align-items:center;justify-content:center;padding:40px}
+.login-card{position:relative;background:transparent;width:100%;max-width:382px;animation:pop .3s ease}
+.login-card .mini-logo{display:none;align-items:center;gap:11px;margin-bottom:26px}
+.login-card .mini-logo .word b{font-family:var(--display);font-size:19px;font-weight:800;letter-spacing:-.4px;color:var(--ink)}
+.login-card .mini-logo .word b span{background:linear-gradient(135deg,#6d28d9,#1d4ed8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.login-card .eyebrow{color:var(--violet);font-weight:700;font-size:12.5px;letter-spacing:.5px;text-transform:uppercase}
+.login-card h2{font-family:var(--display);font-size:26px;font-weight:800;letter-spacing:-.5px;margin-top:8px}
+.login-card p.sub{font-size:14px;color:var(--muted);margin:6px 0 22px}
 .login-card .field{margin-bottom:14px}
 .login-err{color:var(--red);font-size:12.5px;font-weight:600;margin-bottom:10px;display:none}
-.login-card .btn{width:100%;justify-content:center;padding:12px}
-.login-link{display:block;text-align:center;margin-top:16px;font-size:12px;color:var(--muted);cursor:pointer}
-.login-link:hover{color:var(--violet)}
+.login-card .btn{width:100%;justify-content:center;padding:13px;background:linear-gradient(135deg,#6d28d9 0%,#4530d0 100%);box-shadow:0 10px 22px rgba(76,29,149,.32)}
+.login-card .hint{margin-top:24px;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.6}
+.login-card .hint b{color:var(--ink);font-weight:600}
+.login-link{display:block;text-align:center;margin-top:14px;font-size:12.5px;color:var(--violet);cursor:pointer;font-weight:600}
+.login-link:hover{text-decoration:underline}
+@media(max-width:860px){
+  .login-screen{grid-template-columns:1fr}
+  .login-brand{display:none}
+  .login-card .mini-logo{display:flex}
+}
 .user-chip{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:5px 6px 5px 10px;font-size:13px;font-weight:600}
 .user-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
 .user-row input{flex:1}
@@ -298,17 +334,93 @@ tbody tr:hover{background:var(--panel-tint);box-shadow:inset 2px 0 0 var(--viole
 
 <!-- Login -->
 <div class="login-screen" id="loginScreen">
-  <div class="login-card">
-    <div class="logo">S</div>
-    <h2>SkillDeck CRM</h2>
-    <p>Connecte-toi pour accéder à la prospection.</p>
-    <div class="login-err" id="loginErr">Identifiants incorrects.</div>
-    <div class="field"><label>Commercial</label><input type="text" id="loginUser" placeholder="Ton nom (ex. Tim)" onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()"/></div>
-    <div class="field"><label>Mot de passe</label>
-      <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
-    <button class="btn btn-primary" onclick="doLogin()">Se connecter →</button>
-    <span class="login-link" onclick="openUsers()">＋ Gérer les commerciaux</span>
-  </div>
+
+  <!-- left brand panel -->
+  <section class="login-brand">
+    <div class="lb-logo">
+      <span class="mark">
+        <svg viewBox="0 0 120 120" width="48" height="48" aria-hidden="true">
+          <defs>
+            <linearGradient id="lbCard" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1c1656"/><stop offset="100%" stop-color="#0a1850"/></linearGradient>
+            <linearGradient id="lbEdge" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#b14bff"/><stop offset="50%" stop-color="#6d28d9"/><stop offset="100%" stop-color="#3b82f6"/></linearGradient>
+            <linearGradient id="lbBolt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3edff"/><stop offset="100%" stop-color="#c4b5fd"/></linearGradient>
+          </defs>
+          <g transform="rotate(-6 60 60)">
+            <rect x="36" y="42" width="54" height="64" rx="14" fill="#0c0c2e" stroke="url(#lbEdge)" stroke-width="1.4" opacity=".5"/>
+            <rect x="33" y="33" width="54" height="64" rx="14" fill="#0f0f38" stroke="url(#lbEdge)" stroke-width="1.4" opacity=".8"/>
+            <rect x="30" y="24" width="54" height="64" rx="14" fill="url(#lbCard)" stroke="url(#lbEdge)" stroke-width="2.2"/>
+            <path d="M64 38 L48 62 L59 62 L53 86 L73 54 L62 54 L68 38 Z" fill="url(#lbBolt)"/>
+          </g>
+        </svg>
+      </span>
+      <div class="word"><b>Skill<span>Deck</span></b><small>CRM</small></div>
+    </div>
+
+    <div class="lb-hero">
+      <h1>Votre prospection ESN,<br><em>à la vitesse de l'éclair.</em></h1>
+      <p>Centralisez vos prospects, automatisez vos relances et suivez votre pipeline commercial — du premier mail au client signé.</p>
+    </div>
+
+    <div class="lb-stats">
+      <div class="s"><b>274</b><span>prospects suivis</span></div>
+      <div class="s"><b>113</b><span>emails prêts</span></div>
+      <div class="s"><b>J+4</b><span>relance auto</span></div>
+    </div>
+
+    <div class="lb-prev" aria-hidden="true">
+      <div class="top">
+        <div class="kpi"><span>Pipeline</span><b>312 k€</b></div>
+        <div class="kpi"><span>RDV ce mois</span><b>18</b></div>
+        <div class="kpi"><span>Taux réponse</span><b>24 %</b></div>
+      </div>
+      <div class="lb-bars">
+        <i style="height:38%"></i><i style="height:52%"></i><i style="height:44%"></i>
+        <i style="height:68%"></i><i style="height:58%"></i><i class="hot" style="height:88%"></i>
+        <i style="height:72%"></i><i style="height:80%"></i>
+      </div>
+      <div class="lb-foot"><span>Prospects → Contactés → RDV → Clients</span><span>+12 % cette semaine</span></div>
+    </div>
+
+    <div class="lb-trust">
+      <svg viewBox="0 0 24 24" fill="none"><path d="M12 2 4 5v6c0 5 3.4 8.5 8 11 4.6-2.5 8-6 8-11V5l-8-3Z" stroke="#c4b5fd" stroke-width="1.7" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="#c4b5fd" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      Connexion chiffrée · données privées de l'équipe SkillDeck
+    </div>
+  </section>
+
+  <!-- right form panel -->
+  <section class="login-right">
+    <div class="login-card">
+      <div class="mini-logo">
+        <span class="mark">
+          <svg viewBox="0 0 120 120" width="44" height="44" aria-hidden="true">
+            <defs>
+              <linearGradient id="lbCard2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1c1656"/><stop offset="100%" stop-color="#0a1850"/></linearGradient>
+              <linearGradient id="lbEdge2" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#b14bff"/><stop offset="50%" stop-color="#6d28d9"/><stop offset="100%" stop-color="#3b82f6"/></linearGradient>
+              <linearGradient id="lbBolt2" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3edff"/><stop offset="100%" stop-color="#c4b5fd"/></linearGradient>
+            </defs>
+            <g transform="rotate(-6 60 60)">
+              <rect x="36" y="42" width="54" height="64" rx="14" fill="#0c0c2e" stroke="url(#lbEdge2)" stroke-width="1.4" opacity=".5"/>
+              <rect x="33" y="33" width="54" height="64" rx="14" fill="#0f0f38" stroke="url(#lbEdge2)" stroke-width="1.4" opacity=".8"/>
+              <rect x="30" y="24" width="54" height="64" rx="14" fill="url(#lbCard2)" stroke="url(#lbEdge2)" stroke-width="2.2"/>
+              <path d="M64 38 L48 62 L59 62 L53 86 L73 54 L62 54 L68 38 Z" fill="url(#lbBolt2)"/>
+            </g>
+          </svg>
+        </span>
+        <div class="word"><b>Skill<span>Deck</span></b></div>
+      </div>
+
+      <div class="eyebrow">Espace commercial</div>
+      <h2>Bon retour 👋</h2>
+      <p class="sub">Connectez-vous pour accéder à votre base de prospection.</p>
+      <div class="login-err" id="loginErr">Identifiants incorrects.</div>
+      <div class="field"><label>Commercial</label><input type="text" id="loginUser" placeholder="Ton nom (ex. Tim)" onkeydown="if(event.key==='Enter')document.getElementById('loginPass').focus()"/></div>
+      <div class="field"><label>Mot de passe</label>
+        <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
+      <button class="btn btn-primary" onclick="doLogin()">Se connecter →</button>
+      <span class="login-link" onclick="openUsers()">＋ Gérer les commerciaux</span>
+      <p class="hint">Comptes équipe : <b>Tim</b> · <b>Romain</b><br>Besoin d'un accès ? Demandez à l'administrateur du CRM.</p>
+    </div>
+  </section>
 </div>
 
 <div class="app">
@@ -1109,7 +1221,7 @@ async function initAuth(){
   if(!SYNC){ const lu=localStorage.getItem('skilldeck_localuser'); if(lu){ currentUser=lu; await loadUsersList(); await load(); showApp(); return; } }
   showLogin();
 }
-function showLogin(){ document.getElementById('loginScreen').style.display='flex'; }
+function showLogin(){ document.getElementById('loginScreen').style.display='grid'; }
 function showApp(){ document.getElementById('loginScreen').style.display='none'; renderUserChip(); switchView(currentView); }
 async function doLogin(){
   const n=document.getElementById('loginUser').value.trim(), p=document.getElementById('loginPass').value, err=document.getElementById('loginErr');
