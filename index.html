@@ -262,15 +262,19 @@ tbody tr:hover{background:var(--panel-tint);box-shadow:inset 2px 0 0 var(--viole
 .lb-trust{position:relative;z-index:2;margin-top:auto;padding-top:28px;font-size:12.5px;color:#b3a9e0;font-weight:500;display:flex;align-items:center;gap:8px}
 .lb-trust svg{width:15px;height:15px;flex:none}
 /* right form panel */
-.login-right{display:flex;align-items:center;justify-content:center;padding:40px}
+.login-right{display:flex;align-items:center;justify-content:center;padding:40px;background:#f6f5fb}
 .login-card{position:relative;background:transparent;width:100%;max-width:382px;animation:pop .3s ease}
 .login-card .mini-logo{display:none;align-items:center;gap:11px;margin-bottom:26px}
 .login-card .mini-logo .word b{font-family:var(--display);font-size:19px;font-weight:800;letter-spacing:-.4px;color:var(--ink)}
 .login-card .mini-logo .word b span{background:linear-gradient(135deg,#6d28d9,#1d4ed8);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
 .login-card .eyebrow{color:var(--violet);font-weight:700;font-size:12.5px;letter-spacing:.5px;text-transform:uppercase}
-.login-card h2{font-family:var(--display);font-size:26px;font-weight:800;letter-spacing:-.5px;margin-top:8px}
+.login-card h2{font-family:var(--display);font-size:26px;font-weight:800;letter-spacing:-.5px;margin-top:8px;color:var(--ink)}
 .login-card p.sub{font-size:14px;color:var(--muted);margin:6px 0 22px}
 .login-card .field{margin-bottom:14px}
+.login-card label{display:block;font-size:12px;font-weight:700;letter-spacing:.4px;text-transform:uppercase;color:var(--muted);margin-bottom:7px}
+.login-card input{width:100%;height:48px;background:#fff;color:var(--ink);border:1.5px solid var(--border);border-radius:12px;padding:0 14px;font-family:inherit;font-size:14.5px;transition:border-color .15s,box-shadow .15s}
+.login-card input::placeholder{color:#9c98ad}
+.login-card input:focus{outline:none;border-color:var(--violet);box-shadow:0 0 0 4px var(--violet-soft);background:#fff}
 .login-err{color:var(--red);font-size:12.5px;font-weight:600;margin-bottom:10px;display:none}
 .login-card .btn{width:100%;justify-content:center;padding:13px;background:linear-gradient(135deg,#6d28d9 0%,#4530d0 100%);box-shadow:0 10px 22px rgba(76,29,149,.32)}
 .login-card .hint{margin-top:24px;font-size:12.5px;color:var(--muted);text-align:center;line-height:1.6}
@@ -281,6 +285,68 @@ tbody tr:hover{background:var(--panel-tint);box-shadow:inset 2px 0 0 var(--viole
   .login-screen{grid-template-columns:1fr}
   .login-brand{display:none}
   .login-card .mini-logo{display:flex}
+}
+/* ═══ Vitrine publique ═══ */
+.vitrine{position:fixed;inset:0;z-index:200;overflow-y:auto;display:none;color:#fff;font-family:var(--sans);
+  background:linear-gradient(160deg,#0b0a1f 0%,#120d2e 46%,#0b0a1f 100%)}
+.vitrine::before{content:'';position:absolute;width:680px;height:680px;border-radius:50%;top:-260px;right:-200px;pointer-events:none;
+  background:radial-gradient(circle at center,rgba(37,99,235,.22),transparent 70%)}
+.vitrine::after{content:'';position:absolute;width:560px;height:560px;border-radius:50%;top:240px;left:-220px;pointer-events:none;
+  background:radial-gradient(circle at center,rgba(168,85,247,.20),transparent 70%)}
+.vt-wrap{position:relative;z-index:1;max-width:1080px;margin:0 auto;padding:0 28px}
+.vt-nav{display:flex;align-items:center;justify-content:space-between;padding:22px 0}
+.vt-logo{display:flex;align-items:center;gap:12px}
+.vt-logo .mark{width:42px;height:42px;display:grid;place-items:center;filter:drop-shadow(0 6px 14px rgba(124,58,237,.4))}
+.vt-logo b{font-family:var(--display);font-size:19px;font-weight:800;letter-spacing:-.4px}
+.vt-logo b span{color:#c4b5fd}
+.vt-nav .links{display:flex;align-items:center;gap:26px;font-size:14px}
+.vt-nav .links a{color:#cfc9f2;text-decoration:none;font-weight:500}
+.vt-nav .links a:hover{color:#fff}
+.vt-cta{background:linear-gradient(135deg,#6d28d9,#4530d0);color:#fff;font-weight:700;font-size:14px;padding:10px 18px;border-radius:11px;box-shadow:0 8px 20px rgba(76,29,149,.4)}
+.vt-cta:hover{filter:brightness(1.08)}
+.vt-hero{display:grid;grid-template-columns:1fr 1fr;gap:42px;align-items:center;padding:54px 0 64px}
+.vt-badge{display:inline-flex;align-items:center;gap:7px;background:rgba(196,181,253,.12);border:1px solid rgba(196,181,253,.25);color:#d6cdff;font-size:12.5px;font-weight:600;padding:6px 13px;border-radius:999px}
+.vt-hero h1{font-family:var(--display);font-size:46px;line-height:1.1;font-weight:800;letter-spacing:-1.4px;margin:20px 0 0}
+.vt-hero h1 em{font-style:normal;background:linear-gradient(90deg,#c4b5fd,#7da8ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.vt-hero .p{font-size:16px;line-height:1.65;color:#cfc9f2;margin-top:18px;max-width:470px}
+.vt-actions{display:flex;gap:14px;margin-top:30px;flex-wrap:wrap}
+.vt-btn-primary{background:linear-gradient(135deg,#6d28d9,#4530d0);color:#fff;font-weight:700;font-size:15px;padding:14px 24px;border-radius:12px;display:inline-flex;align-items:center;gap:9px;box-shadow:0 12px 26px rgba(76,29,149,.42)}
+.vt-btn-primary:hover{filter:brightness(1.08)}
+.vt-btn-ghost{background:rgba(255,255,255,.06);border:1px solid rgba(255,255,255,.18);color:#fff;font-weight:600;font-size:15px;padding:14px 22px;border-radius:12px}
+.vt-btn-ghost:hover{background:rgba(255,255,255,.12)}
+.vt-mock{background:rgba(255,255,255,.05);border:1px solid rgba(196,181,253,.2);border-radius:20px;padding:18px;backdrop-filter:blur(10px);box-shadow:0 30px 70px rgba(0,0,0,.4)}
+.vt-mock .r1{display:flex;gap:12px;margin-bottom:14px}
+.vt-mock .kpi{flex:1;background:rgba(255,255,255,.07);border:1px solid rgba(196,181,253,.15);border-radius:13px;padding:13px 14px}
+.vt-mock .kpi span{font-size:11.5px;color:#b3a9e0;font-weight:500}
+.vt-mock .kpi b{display:block;font-family:var(--display);font-size:20px;font-weight:800;margin-top:4px}
+.vt-mock .bars{display:flex;align-items:flex-end;gap:10px;height:96px;padding:6px 4px 0}
+.vt-mock .bars i{flex:1;background:linear-gradient(180deg,#8b7cf6,#6d28d9);border-radius:6px 6px 0 0;opacity:.72}
+.vt-mock .bars i.hot{background:linear-gradient(180deg,#c4b5fd,#7c3aed);opacity:1}
+.vt-mock .cap{display:flex;justify-content:space-between;margin-top:12px;font-size:11.5px;color:#b3a9e0;font-weight:500}
+.vt-stats{display:flex;gap:54px;justify-content:center;padding:4px 0 56px;flex-wrap:wrap}
+.vt-stats .s{text-align:center}
+.vt-stats .s b{display:block;font-family:var(--display);font-size:34px;font-weight:800;background:linear-gradient(90deg,#c4b5fd,#7da8ff);-webkit-background-clip:text;background-clip:text;-webkit-text-fill-color:transparent}
+.vt-stats .s span{font-size:13px;color:#b3a9e0;font-weight:500}
+.vt-sec{padding:30px 0}
+.vt-sec .eyebrow{text-align:center;color:#c4b5fd;font-weight:700;font-size:13px;letter-spacing:1px;text-transform:uppercase}
+.vt-sec h2{text-align:center;font-family:var(--display);font-size:34px;font-weight:800;letter-spacing:-.8px;margin-top:10px}
+.vt-sec .lead{text-align:center;color:#cfc9f2;font-size:15.5px;max-width:560px;margin:14px auto 0;line-height:1.6}
+.vt-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:42px}
+.vt-feat{background:rgba(255,255,255,.045);border:1px solid rgba(196,181,253,.14);border-radius:16px;padding:24px}
+.vt-feat .ic{width:46px;height:46px;border-radius:12px;background:rgba(124,58,237,.18);border:1px solid rgba(196,181,253,.25);display:grid;place-items:center;color:#c4b5fd;margin-bottom:16px}
+.vt-feat .ic svg{width:22px;height:22px}
+.vt-feat h3{font-family:var(--display);font-size:17px;font-weight:800;letter-spacing:-.3px}
+.vt-feat p{font-size:13.5px;color:#b8b2d8;line-height:1.55;margin-top:8px}
+.vt-final{background:linear-gradient(135deg,#3a1d8f,#5b21b6);border:1px solid rgba(196,181,253,.25);border-radius:24px;padding:54px 40px;text-align:center;margin:54px 0 64px}
+.vt-final h2{font-family:var(--display);font-size:32px;font-weight:800;letter-spacing:-.7px}
+.vt-final p{color:#e7e0ff;font-size:15px;margin:14px 0 28px}
+.vt-final .vt-btn-primary{background:#fff;color:#4c1d95}
+.vt-foot{border-top:1px solid rgba(255,255,255,.08);padding:26px 0 44px;display:flex;justify-content:space-between;align-items:center;color:#8e88b0;font-size:12.5px;flex-wrap:wrap;gap:10px}
+@media(max-width:860px){
+  .vt-hero{grid-template-columns:1fr;padding:34px 0 40px}
+  .vt-hero h1{font-size:33px}
+  .vt-nav .links{display:none}
+  .vt-grid{grid-template-columns:1fr}
 }
 .user-chip{display:inline-flex;align-items:center;gap:8px;background:var(--card);border:1px solid var(--border);border-radius:10px;padding:5px 6px 5px 10px;font-size:13px;font-weight:600}
 .user-row{display:flex;gap:8px;align-items:center;margin-bottom:8px}
@@ -331,6 +397,126 @@ tbody tr:hover{background:var(--panel-tint);box-shadow:inset 2px 0 0 var(--viole
 </style>
 </head>
 <body>
+
+<!-- Vitrine publique -->
+<div class="vitrine" id="vitrine">
+  <div class="vt-wrap">
+
+    <nav class="vt-nav">
+      <div class="vt-logo">
+        <span class="mark">
+          <svg viewBox="0 0 120 120" width="40" height="40" aria-hidden="true">
+            <defs>
+              <linearGradient id="vtCard" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#1c1656"/><stop offset="100%" stop-color="#0a1850"/></linearGradient>
+              <linearGradient id="vtEdge" x1="0" y1="1" x2="1" y2="0"><stop offset="0" stop-color="#b14bff"/><stop offset="50%" stop-color="#6d28d9"/><stop offset="100%" stop-color="#3b82f6"/></linearGradient>
+              <linearGradient id="vtBolt" x1="0" y1="0" x2="1" y2="1"><stop offset="0" stop-color="#f3edff"/><stop offset="100%" stop-color="#c4b5fd"/></linearGradient>
+            </defs>
+            <g transform="rotate(-6 60 60)">
+              <rect x="36" y="42" width="54" height="64" rx="14" fill="#0c0c2e" stroke="url(#vtEdge)" stroke-width="1.4" opacity=".5"/>
+              <rect x="33" y="33" width="54" height="64" rx="14" fill="#0f0f38" stroke="url(#vtEdge)" stroke-width="1.4" opacity=".8"/>
+              <rect x="30" y="24" width="54" height="64" rx="14" fill="url(#vtCard)" stroke="url(#vtEdge)" stroke-width="2.2"/>
+              <path d="M64 38 L48 62 L59 62 L53 86 L73 54 L62 54 L68 38 Z" fill="url(#vtBolt)"/>
+            </g>
+          </svg>
+        </span>
+        <b>Skill<span>Deck</span> CRM</b>
+      </div>
+      <div class="links">
+        <a href="#vt-features">Fonctionnalités</a>
+        <a href="#vt-security">Sécurité</a>
+        <button class="vt-cta" onclick="openLogin()">Se connecter</button>
+      </div>
+    </nav>
+
+    <header class="vt-hero">
+      <div>
+        <span class="vt-badge">⚡ CRM de prospection ESN</span>
+        <h1>Signez plus d'ESN,<br><em>sans perdre le fil.</em></h1>
+        <div class="p">Centralisez vos prospects, automatisez vos relances et pilotez votre pipeline commercial — du premier mail au client signé. Conçu pour les équipes SkillDeck.</div>
+        <div class="vt-actions">
+          <button class="vt-btn-primary" onclick="openLogin()">
+            Se connecter
+            <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M5 12h14m-6-6 6 6-6 6" stroke="#fff" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          </button>
+          <a class="vt-btn-ghost" href="#vt-features">Découvrir l'outil</a>
+        </div>
+      </div>
+      <div class="vt-mock" aria-hidden="true">
+        <div class="r1">
+          <div class="kpi"><span>Pipeline pondéré</span><b>312 k€</b></div>
+          <div class="kpi"><span>RDV ce mois</span><b>18</b></div>
+          <div class="kpi"><span>Taux réponse</span><b>24 %</b></div>
+        </div>
+        <div class="bars">
+          <i style="height:36%"></i><i style="height:50%"></i><i style="height:42%"></i>
+          <i style="height:66%"></i><i style="height:56%"></i><i class="hot" style="height:90%"></i>
+          <i style="height:70%"></i><i style="height:82%"></i>
+        </div>
+        <div class="cap"><span>Prospects → Contactés → RDV → Clients</span><span>+12 % cette semaine</span></div>
+      </div>
+    </header>
+
+    <div class="vt-stats">
+      <div class="s"><b>274</b><span>prospects suivis</span></div>
+      <div class="s"><b>113</b><span>emails prêts à l'envoi</span></div>
+      <div class="s"><b>J+4</b><span>relance automatique</span></div>
+      <div class="s"><b>100 %</b><span>données chiffrées</span></div>
+    </div>
+
+    <section class="vt-sec" id="vt-features">
+      <div class="eyebrow">Tout-en-un</div>
+      <h2>Tout votre cycle commercial, au même endroit</h2>
+      <p class="lead">De la base de prospects au suivi du chiffre d'affaires, SkillDeck CRM réunit chaque étape de votre prospection ESN.</p>
+      <div class="vt-grid">
+        <div class="vt-feat">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><circle cx="9" cy="8" r="3.2" stroke="currentColor" stroke-width="1.7"/><path d="M3 20c0-3 2.7-5 6-5s6 2 6 5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/><path d="M16 5a3 3 0 0 1 0 6m5 9c0-2.4-1.7-4-4-4.5" stroke="currentColor" stroke-width="1.7" stroke-linecap="round"/></svg></div>
+          <h3>Base centralisée</h3>
+          <p>Tous vos prospects ESN, cabinets et indépendants au même endroit, avec contacts décideurs, sites et coordonnées.</p>
+        </div>
+        <div class="vt-feat">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><circle cx="12" cy="12" r="9" stroke="currentColor" stroke-width="1.7"/><path d="M12 7v5l3 2" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Relances auto J+4</h3>
+          <p>Dès qu'un mail part, une relance est planifiée 4 jours ouvrés plus tard. Vous ne laissez plus filer un prospect.</p>
+        </div>
+        <div class="vt-feat">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="4" width="5" height="16" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="10" y="4" width="5" height="11" rx="1.5" stroke="currentColor" stroke-width="1.7"/><rect x="17" y="4" width="4" height="7" rx="1.5" stroke="currentColor" stroke-width="1.7"/></svg></div>
+          <h3>Pipeline Kanban</h3>
+          <p>Faites glisser vos deals d'une étape à l'autre, de « À contacter » à « Gagné », et visualisez tout d'un coup d'œil.</p>
+        </div>
+        <div class="vt-feat">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><rect x="3" y="5" width="18" height="14" rx="2" stroke="currentColor" stroke-width="1.7"/><path d="m4 7 8 6 8-6" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Mailing de masse</h3>
+          <p>Sélectionnez vos cibles, personnalisez le modèle et générez vos emails en lot — relances et historique mis à jour.</p>
+        </div>
+        <div class="vt-feat">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M4 19V5m0 14h16M8 16l3.5-4 3 2.5L20 8" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Analytics & CA</h3>
+          <p>Suivez votre pipeline pondéré, votre chiffre d'affaires signé et vos taux de conversion en temps réel.</p>
+        </div>
+        <div class="vt-feat" id="vt-security">
+          <div class="ic"><svg viewBox="0 0 24 24" fill="none"><path d="M12 3 5 6v6c0 4.5 3 7.5 7 9 4-1.5 7-4.5 7-9V6l-7-3Z" stroke="currentColor" stroke-width="1.7" stroke-linejoin="round"/><path d="m9 12 2 2 4-4" stroke="currentColor" stroke-width="1.7" stroke-linecap="round" stroke-linejoin="round"/></svg></div>
+          <h3>Sécurisé & chiffré</h3>
+          <p>Accès par compte protégé, mots de passe chiffrés et connexion par jeton. Vos données restent privées à l'équipe.</p>
+        </div>
+      </div>
+    </section>
+
+    <section class="vt-final">
+      <h2>Prêt à accélérer votre prospection ?</h2>
+      <p>Connectez-vous pour retrouver vos prospects, vos relances et votre pipeline.</p>
+      <button class="vt-btn-primary" onclick="openLogin()">
+        Se connecter
+        <svg viewBox="0 0 24 24" fill="none" width="18" height="18"><path d="M5 12h14m-6-6 6 6-6 6" stroke="#4c1d95" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+      </button>
+    </section>
+
+    <footer class="vt-foot">
+      <span>© 2026 SkillDeck — Outil interne de prospection</span>
+      <span>🔒 Connexion chiffrée · données privées de l'équipe</span>
+    </footer>
+
+  </div>
+</div>
 
 <!-- Login -->
 <div class="login-screen" id="loginScreen">
@@ -418,6 +604,7 @@ tbody tr:hover{background:var(--panel-tint);box-shadow:inset 2px 0 0 var(--viole
         <input type="password" id="loginPass" placeholder="••••••••" onkeydown="if(event.key==='Enter')doLogin()"/></div>
       <button class="btn btn-primary" onclick="doLogin()">Se connecter →</button>
       <span class="login-link" onclick="openUsers()">＋ Gérer les commerciaux</span>
+      <span class="login-link" onclick="showVitrine()" style="color:var(--muted);font-weight:500">← Retour à l'accueil</span>
       <p class="hint">Comptes équipe : <b>Tim</b> · <b>Romain</b><br>Besoin d'un accès ? Demandez à l'administrateur du CRM.</p>
     </div>
   </section>
@@ -433,6 +620,7 @@ tbody tr:hover{background:var(--panel-tint);box-shadow:inset 2px 0 0 var(--viole
       <button data-view="home" class="active" onclick="switchView('home')"><span class="ic">🏠</span> Accueil</button>
       <button data-view="prospects" onclick="switchView('prospects')"><span class="ic">📇</span> Prospects</button>
       <button data-view="pipeline" onclick="switchView('pipeline')"><span class="ic">🗂️</span> Pipeline</button>
+      <button data-view="rdv" onclick="switchView('rdv')"><span class="ic">📅</span> Rendez-vous</button>
       <button data-view="clients" onclick="switchView('clients')"><span class="ic">🤝</span> Clients & CA</button>
       <button data-view="mailing" onclick="switchView('mailing')"><span class="ic">📨</span> Mailing de masse</button>
       <button data-view="analytics" onclick="switchView('analytics')"><span class="ic">📊</span> Analytics</button>
@@ -499,6 +687,24 @@ tbody tr:hover{background:var(--panel-tint);box-shadow:inset 2px 0 0 var(--viole
       <span class="note-hint" style="margin-left:auto">Glisse une carte d'une colonne à l'autre pour changer son statut.</span>
     </div>
     <div class="kanban" id="kanban"></div>
+  </section>
+
+  <!-- RENDEZ-VOUS -->
+  <section class="view" id="view-rdv">
+    <div class="stat-cards" id="rdvStats"></div>
+    <div class="filters">
+      <button class="seg-toggle active" id="rdvUpcomingBtn" onclick="rdvShowPast=false;this.classList.add('active');document.getElementById('rdvPastBtn').classList.remove('active');renderRdv()">📅 À venir</button>
+      <button class="seg-toggle" id="rdvPastBtn" onclick="rdvShowPast=true;this.classList.add('active');document.getElementById('rdvUpcomingBtn').classList.remove('active');renderRdv()">🕑 Passés</button>
+      <button class="seg-toggle" id="rdvMineBtn" onclick="rdvMine=!rdvMine;this.classList.toggle('active',rdvMine);renderRdv()">👤 Mes RDV</button>
+      <span class="note-hint" style="margin-left:auto">Planifie un RDV depuis la fiche d'un prospect (onglet « RDV »).</span>
+    </div>
+    <div class="tablecard">
+      <table>
+        <thead><tr><th>Quand</th><th>Type</th><th>Prospect</th><th class="hide-sm">Contact</th><th class="hide-sm">Objet</th><th class="hide-sm">Resp.</th><th style="text-align:right">Actions</th></tr></thead>
+        <tbody id="rdvBody"></tbody>
+      </table>
+      <div class="empty" id="rdvEmpty" style="display:none">Aucun rendez-vous. Ouvre une fiche prospect → onglet « RDV » pour en planifier un.</div>
+    </div>
   </section>
 
   <!-- CLIENTS -->
@@ -642,7 +848,7 @@ let DATA=[], activeType='', activeType2='', currentView='home';
 /* ═══════════════ Persistance ═══════════════ */
 const LS_KEY='skilldeck_crm_v1', LS_SET='skilldeck_crm_settings_v1';
 function normalize(p){
-  if(!Array.isArray(p.history)) p.history=[]; if(!Array.isArray(p.tasks)) p.tasks=[];
+  if(!Array.isArray(p.history)) p.history=[]; if(!Array.isArray(p.tasks)) p.tasks=[]; if(!Array.isArray(p.rdvs)) p.rdvs=[];
   if(p.relanceDate===undefined)p.relanceDate=''; if(p.owner===undefined)p.owner='';
   ['contactNom','contactRole','contactLinkedin','email','phone','contactPhone','dealRecurrence','clientSince'].forEach(k=>{ if(p[k]===undefined)p[k]=''; });
   if(p.dealValue===undefined)p.dealValue=0; if(p.emailGeneric===undefined)p.emailGeneric=false;
@@ -1219,10 +1425,12 @@ function fillLoginUsers(){}
 async function initAuth(){
   if(SYNC && TOKEN){ try{ const r=await fetch('/api/me',{headers:authHeaders()}); if(r.ok){ const d=await r.json(); currentUser=d.name; await loadUsersList(); await load(); showApp(); return; } }catch(e){} TOKEN=''; try{localStorage.removeItem('skilldeck_token');}catch(e){} }
   if(!SYNC){ const lu=localStorage.getItem('skilldeck_localuser'); if(lu){ currentUser=lu; await loadUsersList(); await load(); showApp(); return; } }
-  showLogin();
+  showVitrine();
 }
-function showLogin(){ document.getElementById('loginScreen').style.display='grid'; }
-function showApp(){ document.getElementById('loginScreen').style.display='none'; renderUserChip(); switchView(currentView); }
+function showVitrine(){ document.getElementById('vitrine').style.display='block'; document.getElementById('loginScreen').style.display='none'; window.scrollTo(0,0); }
+function openLogin(){ document.getElementById('vitrine').style.display='none'; document.getElementById('loginScreen').style.display='grid'; setTimeout(function(){ var u=document.getElementById('loginUser'); if(u)u.focus(); },60); }
+function showLogin(){ document.getElementById('vitrine').style.display='none'; document.getElementById('loginScreen').style.display='grid'; }
+function showApp(){ document.getElementById('vitrine').style.display='none'; document.getElementById('loginScreen').style.display='none'; renderUserChip(); switchView(currentView); }
 async function doLogin(){
   const n=document.getElementById('loginUser').value.trim(), p=document.getElementById('loginPass').value, err=document.getElementById('loginErr');
   if(SYNC){
@@ -1235,7 +1443,7 @@ async function doLogin(){
   if(!n){ err.style.display='block'; return; }
   currentUser=n; try{localStorage.setItem('skilldeck_localuser',n);}catch(e){} err.style.display='none'; await loadUsersList(); await load(); showApp();
 }
-function logout(){ currentUser=null; TOKEN=''; try{localStorage.removeItem('skilldeck_token'); localStorage.removeItem('skilldeck_localuser');}catch(e){} mineOnly=false; document.querySelectorAll('#mineBtn,#mineBtn2').forEach(b=>b.classList.remove('active')); showLogin(); }
+function logout(){ currentUser=null; TOKEN=''; try{localStorage.removeItem('skilldeck_token'); localStorage.removeItem('skilldeck_localuser');}catch(e){} mineOnly=false; document.querySelectorAll('#mineBtn,#mineBtn2').forEach(b=>b.classList.remove('active')); showVitrine(); }
 function renderUserChip(){ document.getElementById('userChip').innerHTML=`<span class="avatar sm">${initials(currentUser)}</span>${esc(currentUser)}<button class="icon-btn" title="Déconnexion" style="width:26px;height:26px" onclick="logout()">⎋</button>`; }
 function toggleMine(){ mineOnly=!mineOnly; document.querySelectorAll('#mineBtn,#mineBtn2').forEach(b=>b.classList.toggle('active',mineOnly)); refreshAll(); }
 function toggleRelance(){ relanceOnly=!relanceOnly; document.getElementById('relanceBtn').classList.toggle('active',relanceOnly); render(); }
@@ -1311,16 +1519,17 @@ function switchView(v){
   currentView=v;
   document.querySelectorAll('.view').forEach(s=>s.classList.toggle('active',s.id==='view-'+v));
   document.querySelectorAll('#nav button').forEach(b=>b.classList.toggle('active',b.dataset.view===v));
-  const titles={home:'Accueil',prospects:'Prospects',pipeline:'Pipeline',clients:'Clients & CA',mailing:'Mailing de masse',analytics:'Analytics'};
+  const titles={home:'Accueil',prospects:'Prospects',pipeline:'Pipeline',rdv:'Rendez-vous',clients:'Clients & CA',mailing:'Mailing de masse',analytics:'Analytics'};
   const vt=document.getElementById('viewTitle'); if(vt) vt.textContent=titles[v]||'';
   if(v==='home') renderHome();
   else if(v==='prospects') render();
   else if(v==='pipeline') renderKanban();
+  else if(v==='rdv') renderRdv();
   else if(v==='clients') renderClients();
   else if(v==='mailing') renderMailing();
   else if(v==='analytics') renderAnalytics();
 }
-function refreshAll(){ if(currentView==='home')renderHome(); else if(currentView==='prospects')render(); else if(currentView==='pipeline')renderKanban(); else if(currentView==='clients')renderClients(); else if(currentView==='mailing')renderMailing(); else if(currentView==='analytics')renderAnalytics(); }
+function refreshAll(){ if(currentView==='home')renderHome(); else if(currentView==='prospects')render(); else if(currentView==='pipeline')renderKanban(); else if(currentView==='rdv')renderRdv(); else if(currentView==='clients')renderClients(); else if(currentView==='mailing')renderMailing(); else if(currentView==='analytics')renderAnalytics(); }
 
 /* ═══════════════ Clients & CA ═══════════════ */
 function renderClients(){
@@ -1549,6 +1758,7 @@ function openDetail(id,pane){
         <button data-p="infos" onclick="detailTab('infos')">Infos</button>
         <button data-p="historique" onclick="detailTab('historique')">Historique (${p.history.length})</button>
         <button data-p="taches" onclick="detailTab('taches')">Tâches (${p.tasks.filter(t=>!t.done).length})</button>
+        <button data-p="rdv" onclick="detailTab('rdv')">RDV (${(p.rdvs||[]).length})</button>
         <button data-p="email" onclick="detailTab('email')">E-mail</button>
       </div>
 
@@ -1611,9 +1821,39 @@ function openDetail(id,pane){
           <button class="btn btn-primary btn-sm" onclick="createDraft()">📥 Créer le brouillon Gmail</button>
         </div>
       </div>
+
+      <div class="dpane" id="pane-rdv">
+        <div class="mail-box" style="margin-top:0;margin-bottom:14px">
+          <h4>📅 Planifier un rendez-vous</h4>
+          <div class="grid2" style="margin-bottom:8px">
+            <div class="field" style="margin:0"><label>Type</label>
+              <select id="rType" onchange="rdvTypeUI()"><option>Visio</option><option>Physique</option><option>Téléphone</option></select></div>
+            <div class="field" style="margin:0"><label>E-mail invité</label>
+              <input type="text" id="rEmail" value="${esc(p.email||'')}" placeholder="contact@domaine.com"/></div>
+          </div>
+          <div class="grid2" style="margin:8px 0">
+            <div class="field" style="margin:0"><label>Date</label><input type="date" id="rDate" value="${todayISO()}"/></div>
+            <div class="field" style="margin:0"><label>Heure</label><input type="time" id="rTime" value="10:00"/></div>
+          </div>
+          <div class="grid2" style="margin:8px 0">
+            <div class="field" style="margin:0"><label>Durée (min)</label><input type="number" id="rDur" value="30" min="15" step="15"/></div>
+            <div class="field" style="margin:0"><label>Objet</label><input type="text" id="rObjet" placeholder="Démo SkillDeck"/></div>
+          </div>
+          <div class="field" id="rLieuWrap" style="margin:8px 0;display:none"><label>Lieu (si physique)</label><input type="text" id="rLieu" placeholder="Adresse / bureaux"/></div>
+          <div class="field" style="margin:8px 0 10px"><label>Notes (optionnel)</label><textarea id="rNotes" style="min-height:54px"></textarea></div>
+          <div style="display:flex;gap:8px;flex-wrap:wrap">
+            <button class="btn btn-primary btn-sm" onclick="saveRdv('${p.id}','gcal')">📅 Créer dans Google Agenda</button>
+            <button class="btn btn-ghost btn-sm" onclick="saveRdv('${p.id}','mail')">✉️ Envoyer l'invitation</button>
+            <button class="btn btn-ghost btn-sm" onclick="saveRdv('${p.id}','save')">💾 Enregistrer</button>
+          </div>
+          <div class="note-hint" style="margin-top:8px">En visio, Google Agenda ajoute le lien Google Meet automatiquement à l'enregistrement et envoie l'invitation à l'e-mail saisi.</div>
+        </div>
+        ${(p.rdvs||[]).length?(p.rdvs||[]).slice().sort((a,b)=>(b.date+(b.time||'')).localeCompare(a.date+(a.time||''))).map(r=>`<div class="task ${r.done?'done':''}"><div class="task-label"><b>${rdvIcon(r.type)} ${fmtDate(r.date)} ${esc(r.time||'')}</b> — ${esc(r.objet||r.type)}${r.email?' · '+esc(r.email):''}</div><a class="icon-btn" title="Rouvrir dans Google Agenda" style="width:26px;height:26px;text-decoration:none" href="${gcalLink(p,r)}" target="_blank">📅</a><button class="icon-btn" style="width:26px;height:26px" title="Supprimer" onclick="delRdv('${p.id}','${r.id}')">🗑</button></div>`).join(''):'<div class="li-sub">Aucun rendez-vous planifié.</div>'}
+      </div>
     </div>`;
   document.getElementById('detailOverlay').classList.add('open');
   detailTab(pane);
+  rdvTypeUI();
 }
 function detailTab(pane){
   document.querySelectorAll('#detailModal .dtabs button').forEach(b=>b.classList.toggle('active',b.dataset.p===pane));
@@ -1643,6 +1883,91 @@ function markContacted(p,logText){
   p.dernierContact=todayISO(); scheduleRelance(p);
   logActivity(p,'mail',logText||'E-mail de prospection envoyé');
   save(); refreshAll();
+}
+
+/* ═══════════════ Rendez-vous ═══════════════ */
+let rdvShowPast=false, rdvMine=false;
+function rdvIcon(t){ return t==='Visio'?'🎥':(t==='Physique'?'📍':(t==='Téléphone'?'📞':'📅')); }
+function rdvTypeUI(){ var t=document.getElementById('rType'); var w=document.getElementById('rLieuWrap'); if(t&&w) w.style.display=(t.value==='Physique')?'block':'none'; }
+function _p2(n){ return String(n).padStart(2,'0'); }
+function gcalStamp(date,time,dur){
+  var dp=(date||todayISO()).split('-').map(Number), tp=(time||'10:00').split(':').map(Number);
+  var s=new Date(dp[0],dp[1]-1,dp[2],tp[0]||0,tp[1]||0), e=new Date(s.getTime()+(+dur||30)*60000);
+  var f=function(d){ return d.getFullYear()+_p2(d.getMonth()+1)+_p2(d.getDate())+'T'+_p2(d.getHours())+_p2(d.getMinutes())+'00'; };
+  return f(s)+'/'+f(e);
+}
+function gcalLink(p,r){
+  var title=encodeURIComponent('SkillDeck × '+p.nom+(r.objet?' — '+r.objet:''));
+  var details=encodeURIComponent((r.notes?r.notes+'\n\n':'')+'Rendez-vous '+r.type+' organisé via SkillDeck CRM.'+(r.type==='Visio'?'\nUn lien Google Meet est ajouté automatiquement.':''));
+  var loc=encodeURIComponent(r.type==='Physique'?(r.lieu||''):(r.type==='Téléphone'?'Appel téléphonique':'Google Meet'));
+  var u='https://calendar.google.com/calendar/render?action=TEMPLATE&text='+title+'&dates='+gcalStamp(r.date,r.time,r.dur)+'&details='+details+'&location='+loc+'&ctz=Europe/Paris';
+  if(r.email) u+='&add='+encodeURIComponent(r.email);
+  return u;
+}
+function rdvMailto(p,r){
+  var to=r.email||p.email||'';
+  var subj=encodeURIComponent('Proposition de '+(r.type==='Visio'?'visio':(r.type==='Téléphone'?'point téléphonique':'rendez-vous'))+' — SkillDeck × '+p.nom);
+  var prenom=(p.contactNom||'').trim().split(' ')[0];
+  var when=fmtDate(r.date)+(r.time?' à '+r.time:'')+' ('+(r.dur||30)+' min)';
+  var body=encodeURIComponent('Bonjour'+(prenom?' '+prenom:'')+',\n\nJe vous propose un '+(r.type==='Visio'?'échange en visio':(r.type==='Téléphone'?'échange téléphonique':'rendez-vous'))+' le '+when+'.\n'+(r.objet?'Objet : '+r.objet+'\n':'')+(r.type==='Visio'?'\nVous recevrez une invitation Google Agenda avec le lien Google Meet.\n':(r.type==='Physique'&&r.lieu?'\nLieu : '+r.lieu+'\n':''))+'\nBien à vous,\n'+(SETTINGS.sender||currentUser||'')+'\n'+(SETTINGS.company||'SkillDeck'));
+  return 'mailto:'+encodeURIComponent(to)+'?subject='+subj+'&body='+body;
+}
+function saveRdv(id,action){
+  var p=DATA.find(function(x){return x.id===id;}); if(!p)return;
+  var r={ id:'r'+Date.now().toString(36), type:document.getElementById('rType').value,
+    date:document.getElementById('rDate').value||todayISO(), time:document.getElementById('rTime').value||'10:00',
+    dur:+document.getElementById('rDur').value||30, objet:document.getElementById('rObjet').value.trim(),
+    email:document.getElementById('rEmail').value.trim(), lieu:(document.getElementById('rLieu')||{}).value||'',
+    notes:document.getElementById('rNotes').value.trim(), owner:p.owner||currentUser, done:false };
+  if(!p.email && r.email) p.email=r.email;
+  if(!p.owner) p.owner=currentUser;
+  if(p.statut==='À contacter') p.statut='Contacté';
+  p.rdvs.unshift(r);
+  logActivity(p,'rdv','RDV '+r.type+' planifié le '+fmtDate(r.date)+' '+r.time+(r.objet?' — '+r.objet:''));
+  save(); refreshAll();
+  if(action==='gcal'){ window.open(gcalLink(p,r),'_blank'); toast('RDV créé · Google Agenda ouvert'); }
+  else if(action==='mail'){ window.open(rdvMailto(p,r),'_blank'); toast('Invitation préparée dans ton client mail'); }
+  else { toast('Rendez-vous enregistré'); }
+  openDetail(id,'rdv');
+}
+function delRdv(id,rid){ var p=DATA.find(function(x){return x.id===id;}); if(!p)return; p.rdvs=p.rdvs.filter(function(r){return r.id!==rid;}); save(); refreshAll(); openDetail(id,'rdv'); }
+function allRdvs(){
+  var out=[]; DATA.forEach(function(p){ (p.rdvs||[]).forEach(function(r){ out.push({p:p,r:r}); }); });
+  return out;
+}
+function renderRdv(){
+  var today=todayISO();
+  var items=allRdvs().filter(function(x){
+    if(rdvMine && x.r.owner!==currentUser && x.p.owner!==currentUser) return false;
+    var past=x.r.date<today;
+    return rdvShowPast?past:!past;
+  });
+  items.sort(function(a,b){ var ka=a.r.date+(a.r.time||''), kb=b.r.date+(b.r.time||''); return rdvShowPast?kb.localeCompare(ka):ka.localeCompare(kb); });
+  var upcoming=allRdvs().filter(function(x){return x.r.date>=today;});
+  var visio=upcoming.filter(function(x){return x.r.type==='Visio';}).length;
+  var thisWeekEnd=isoDate(addBusinessDays(new Date(),5));
+  var week=upcoming.filter(function(x){return x.r.date<=thisWeekEnd;}).length;
+  document.getElementById('rdvStats').innerHTML=[
+    {n:upcoming.length,l:'RDV à venir',c:'var(--violet)'},
+    {n:week,l:'Dans les 7 jours',c:'var(--amber)'},
+    {n:visio,l:'Visios planifiées',c:'var(--blue)'},
+    {n:allRdvs().length,l:'RDV au total',c:'var(--text)'}
+  ].map(function(s){return '<div class="kpi"><div class="num" style="color:'+s.c+';font-size:22px">'+s.n+'</div><div class="lbl">'+s.l+'</div></div>';}).join('');
+  var tb=document.getElementById('rdvBody');
+  document.getElementById('rdvEmpty').style.display=items.length?'none':'block';
+  tb.innerHTML=items.map(function(x){ var p=x.p,r=x.r; var soon=r.date<=isoDate(addBusinessDays(new Date(),2))&&!rdvShowPast;
+    return '<tr>'+
+      '<td><div class="cell-name" style="'+(soon?'color:var(--amber)':'')+'">'+fmtDate(r.date)+' · '+esc(r.time||'')+'</div><div class="cell-sub">'+(r.dur||30)+' min</div></td>'+
+      '<td><span class="badge" style="background:var(--violet-soft);color:var(--violet)">'+rdvIcon(r.type)+' '+esc(r.type)+'</span></td>'+
+      '<td><div class="cell-name">'+esc(p.nom)+'</div><div class="cell-sub">'+esc(p.ville||'')+'</div></td>'+
+      '<td class="hide-sm">'+(p.contactNom?esc(p.contactNom):'—')+'</td>'+
+      '<td class="hide-sm">'+(r.objet?esc(r.objet):'—')+'</td>'+
+      '<td class="hide-sm">'+(r.owner?'<span class="avatar sm" title="'+esc(r.owner)+'">'+initials(r.owner)+'</span>':'—')+'</td>'+
+      '<td style="text-align:right;white-space:nowrap">'+
+        '<a class="icon-btn" title="Google Agenda" style="width:28px;height:28px;text-decoration:none" href="'+gcalLink(p,r)+'" target="_blank">📅</a> '+
+        '<button class="icon-btn" title="Ouvrir la fiche" style="width:28px;height:28px" onclick="openDetail(\''+p.id+'\',\'rdv\')">✏️</button></td>'+
+      '</tr>';
+  }).join('');
 }
 
 /* ═══════════════ Ajout / édition ═══════════════ */
