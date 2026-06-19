@@ -1577,6 +1577,8 @@ function renderHome(){
   const hot=DATA.filter(p=>p.statut==='En discussion');
   const myTasks=[]; DATA.forEach(p=>p.tasks.forEach(t=>{ if(!t.done && t.user===currentUser) myTasks.push({p,t}); }));
   myTasks.sort((a,b)=>(a.t.due||'9999').localeCompare(b.t.due||'9999'));
+  const _td=todayISO(); const rdvUp=[]; DATA.forEach(p=>(p.rdvs||[]).forEach(r=>{ if(r.date>=_td) rdvUp.push({p,r}); }));
+  rdvUp.sort((a,b)=>(a.r.date+(a.r.time||'')).localeCompare(b.r.date+(b.r.time||'')));
   const goal=SETTINGS.weeklyGoal||10, done=contactsThisWeek(currentUser), pct=Math.min(100,goal?done/goal*100:0);
   const won=DATA.filter(p=>p.statut==='Gagné').length;
   const li=(p,right)=>`<div class="list-item" onclick="openDetail('${p.id}')">
@@ -1584,10 +1586,10 @@ function renderHome(){
       <div class="li-main"><div class="li-name">${esc(p.nom)}</div><div class="li-sub">${esc(p.ville||'')}${p.owner?' · '+esc(p.owner):''}</div></div>${right||''}</div>`;
   document.getElementById('view-home').innerHTML=`
     <div class="hello">Bonjour ${esc(currentUser)} 👋</div>
-    <div class="hello-sub">${due.length} relance(s) à faire · ${hot.length} prospect(s) en discussion · ${myTasks.length} tâche(s) en attente</div>
+    <div class="hello-sub">${due.length} relance(s) à faire · ${rdvUp.length} RDV à venir · ${hot.length} prospect(s) en discussion · ${myTasks.length} tâche(s) en attente</div>
     <div class="kpis">
       <div class="kpi"><div class="num" style="color:var(--red)">${due.length}</div><div class="lbl">Relances à faire</div></div>
-      <div class="kpi"><div class="num" style="color:var(--violet)">${hot.length}</div><div class="lbl">En discussion</div></div>
+      <div class="kpi" style="cursor:pointer" onclick="switchView('rdv')"><div class="num" style="color:var(--violet)">${rdvUp.length}</div><div class="lbl">RDV à venir</div></div>
       <div class="kpi"><div class="num" style="color:var(--green)">${won}</div><div class="lbl">Gagnés</div></div>
       <div class="kpi"><div class="num" style="color:var(--blue)">${done}/${goal}</div><div class="lbl">Mes contacts cette semaine</div>
         <div class="bar"><span style="width:${pct}%;background:var(--blue)"></span></div></div>
@@ -1608,7 +1610,12 @@ function renderHome(){
         ${USERS.map(u=>{ const d=contactsThisWeek(u.name),pc=Math.min(100,goal?d/goal*100:0);
           return `<div class="goal-wrap"><div style="display:flex;justify-content:space-between;font-size:13px;font-weight:600"><span>${esc(u.name)}</span><span style="color:var(--muted)">${d}/${goal}</span></div><div class="goal-bar"><span style="width:${pc}%"></span></div></div>`; }).join('')}
         <div class="note-hint" style="margin-top:10px">Contacts (mail/appel/RDV) enregistrés cette semaine. Objectif réglable dans ⚙️.</div></div>
-    </div>`;
+    </div>
+    <div class="panel" style="margin-top:14px"><h3>📅 Prochains rendez-vous <span class="count">${rdvUp.length}</span></h3>
+      ${rdvUp.length?rdvUp.slice(0,8).map(({p,r})=>`<div class="list-item" onclick="openDetail('${p.id}','rdv')">
+          <span class="badge" style="background:var(--violet-soft);color:var(--violet)">${rdvIcon(r.type)} ${esc(r.type)}</span>
+          <div class="li-main"><div class="li-name">${esc(p.nom)}</div><div class="li-sub">${esc(r.objet||'')}${p.contactNom?' · '+esc(p.contactNom):(r.email?' · '+esc(r.email):'')}</div></div>
+          <span class="pill" style="background:${r.date<=isoDate(addBusinessDays(new Date(),2))?'var(--amber-soft);color:var(--amber)':'var(--gray-soft);color:var(--muted)'}">${fmtDate(r.date)} ${esc(r.time||'')}</span></div>`).join(''):'<div class="li-sub">Aucun rendez-vous à venir. Planifie-en un depuis une fiche prospect (onglet « RDV »).</div>'}</div>`;
 }
 
 /* ═══════════════ KPIs prospects ═══════════════ */
