@@ -431,7 +431,7 @@ tbody tr:hover{background:var(--panel-tint);box-shadow:inset 2px 0 0 var(--viole
     <header class="vt-hero">
       <div>
         <span class="vt-badge">⚡ CRM de prospection ESN</span>
-        <h1>Signez plus d'ESN,<br><em>sans perdre le fil.</em></h1>
+        <h1>Signez plus de deals,<br><em>sans perdre le fil.</em></h1>
         <div class="p">Centralisez vos prospects, automatisez vos relances et pilotez votre pipeline commercial — du premier mail au client signé. Conçu pour les équipes SkillDeck.</div>
         <div class="vt-actions">
           <button class="vt-btn-primary" onclick="openLogin()">
@@ -1677,6 +1677,7 @@ function render(){
     <td class="hide-sm">${p.owner?`<span class="avatar sm" title="${esc(p.owner)}">${initials(p.owner)}</span>`:`<span class="avatar sm muted" title="Non attribué">–</span>`}</td>
     <td><div class="row-actions">
       <button class="icon-btn" title="Ouvrir" onclick="openDetail('${p.id}')">✉️</button>
+      ${(p.contactPhone||p.phone)?`<a class="icon-btn" title="Appeler ${esc(p.contactPhone||p.phone)}" href="tel:${esc((p.contactPhone||p.phone).replace(/\s/g,''))}" style="text-decoration:none">📞</a>`:`<span class="icon-btn" title="Aucun téléphone" style="opacity:.25;cursor:default">📞</span>`}
       <button class="icon-btn" title="Modifier" onclick="openEdit('${p.id}')">✏️</button>
       ${p.site?`<a class="icon-btn" title="Ouvrir le site" href="${esc(p.site)}" target="_blank" rel="noopener" style="text-decoration:none">🌐</a>`:`<span class="icon-btn" style="opacity:.25;cursor:default">🌐</span>`}</div></td></tr>`; }).join('');
 }
