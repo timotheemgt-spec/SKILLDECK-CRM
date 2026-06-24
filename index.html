@@ -628,6 +628,7 @@ tbody tr:hover{background:var(--panel-tint);box-shadow:inset 2px 0 0 var(--viole
     <div class="side-sep"></div>
     <div class="side-actions">
       <button class="btn btn-primary" onclick="openEdit(null)">＋ Prospect</button>
+      <button class="btn btn-ghost" onclick="refreshFromServer(false)">🔄 Synchroniser <span id="syncInfo" style="margin-left:auto;font-size:11px;color:var(--muted2)"></span></button>
       <button class="btn btn-ghost" onclick="exportCSV()">⬇︎ Export CSV</button>
       <button class="btn btn-ghost" onclick="openSettings()">⚙️ Réglages</button>
       <button class="btn btn-ghost" id="themeBtn" onclick="toggleTheme()">🌙 Thème sombre</button>
@@ -1339,6 +1340,27 @@ async function load(){
   mergeExtra(); applyEnrichment(); fillGenericEmails(); localStorage.setItem(LS_KEY, JSON.stringify(DATA));
 }
 function pushData(){ if(!(SYNC&&TOKEN)) return; fetch('/api/data',{method:'POST',headers:authHeaders({'Content-Type':'application/json'}),body:JSON.stringify({prospects:DATA})}).catch(()=>{}); }
+let _syncTimer=null, _lastSync=0;
+async function refreshFromServer(silent){
+  if(!(SYNC&&TOKEN)){ if(!silent)toast('Synchro dispo uniquement sur la version en ligne',true); return; }
+  // ne pas écraser pendant une saisie / modale ouverte
+  if(document.querySelector('.overlay.open')){ if(!silent)toast('Ferme la fiche ouverte avant de synchroniser'); return; }
+  try{
+    const r=await fetch('/api/data',{headers:authHeaders()});
+    if(r.status===401){ TOKEN=''; try{localStorage.removeItem('skilldeck_token');}catch(e){} showLogin(); return; }
+    if(r.ok){ const d=await r.json();
+      if(d && Array.isArray(d.prospects)){ DATA=d.prospects.map(normalize); mergeExtra(); applyEnrichment(); fillGenericEmails(); }
+      _lastSync=Date.now(); refreshAll(); updateSyncChip();
+      if(!silent) toast('Synchronisé ✓');
+    }
+  }catch(e){ if(!silent)toast('Synchro impossible',true); }
+}
+function updateSyncChip(){ const el=document.getElementById('syncInfo'); if(el && _lastSync) el.textContent='Synchro '+new Date(_lastSync).toLocaleTimeString('fr-FR',{hour:'2-digit',minute:'2-digit'}); }
+function startAutoSync(){
+  if(!(SYNC&&TOKEN)) return;
+  clearInterval(_syncTimer);
+  _syncTimer=setInterval(function(){ if(!document.querySelector('.overlay.open') && document.visibilityState==='visible') refreshFromServer(true); }, 30000);
+}
 function save(){ try{localStorage.setItem(LS_KEY, JSON.stringify(DATA));}catch(e){} if(SYNC&&TOKEN){ clearTimeout(_saveTimer); _saveTimer=setTimeout(pushData,500); } }
 
 const DEFAULT_SETTINGS={
@@ -1430,7 +1452,7 @@ async function initAuth(){
 function showVitrine(){ document.getElementById('vitrine').style.display='block'; document.getElementById('loginScreen').style.display='none'; window.scrollTo(0,0); }
 function openLogin(){ document.getElementById('vitrine').style.display='none'; document.getElementById('loginScreen').style.display='grid'; setTimeout(function(){ var u=document.getElementById('loginUser'); if(u)u.focus(); },60); }
 function showLogin(){ document.getElementById('vitrine').style.display='none'; document.getElementById('loginScreen').style.display='grid'; }
-function showApp(){ document.getElementById('vitrine').style.display='none'; document.getElementById('loginScreen').style.display='none'; renderUserChip(); switchView(currentView); }
+function showApp(){ document.getElementById('vitrine').style.display='none'; document.getElementById('loginScreen').style.display='none'; renderUserChip(); switchView(currentView); _lastSync=Date.now(); updateSyncChip(); startAutoSync(); }
 async function doLogin(){
   const n=document.getElementById('loginUser').value.trim(), p=document.getElementById('loginPass').value, err=document.getElementById('loginErr');
   if(SYNC){
@@ -1856,7 +1878,14 @@ function openDetail(id,pane){
           </div>
           <div class="note-hint" style="margin-top:8px">En visio, Google Agenda ajoute le lien Google Meet automatiquement à l'enregistrement et envoie l'invitation à l'e-mail saisi.</div>
         </div>
-        ${(p.rdvs||[]).length?(p.rdvs||[]).slice().sort((a,b)=>(b.date+(b.time||'')).localeCompare(a.date+(a.time||''))).map(r=>`<div class="task ${r.done?'done':''}"><div class="task-label"><b>${rdvIcon(r.type)} ${fmtDate(r.date)} ${esc(r.time||'')}</b> — ${esc(r.objet||r.type)}${r.email?' · '+esc(r.email):''}</div><a class="icon-btn" title="Rouvrir dans Google Agenda" style="width:26px;height:26px;text-decoration:none" href="${gcalLink(p,r)}" target="_blank">📅</a><button class="icon-btn" style="width:26px;height:26px" title="Supprimer" onclick="delRdv('${p.id}','${r.id}')">🗑</button></div>`).join(''):'<div class="li-sub">Aucun rendez-vous planifié.</div>'}
+        ${(p.rdvs||[]).length?(p.rdvs||[]).slice().sort((a,b)=>(b.date+(b.time||'')).localeCompare(a.date+(a.time||''))).map(r=>`<div style="margin-bottom:6px"><div class="task ${r.done?'done':''}"><div class="task-label"><b>${rdvIcon(r.type)} ${fmtDate(r.date)} ${esc(r.time||'')}</b> — ${esc(r.objet||r.type)}${r.email?' · '+esc(r.email):''}${r.done?' · <span style="color:var(--green)">✓ effectué</span>':''}</div><a class="icon-btn" title="Rouvrir dans Google Agenda" style="width:26px;height:26px;text-decoration:none" href="${gcalLink(p,r)}" target="_blank">📅</a><button class="icon-btn" style="width:26px;height:26px" title="Supprimer" onclick="delRdv('${p.id}','${r.id}')">🗑</button></div>
+          <details ${r.cr?'open':''} style="margin:2px 0 4px 2px"><summary style="cursor:pointer;font-size:12.5px;color:var(--violet);font-weight:600;padding:4px 0">📝 Compte-rendu${r.cr?' ✓':''}</summary>
+            <textarea id="cr_${r.id}" style="min-height:74px;margin-top:6px;width:100%" placeholder="Ce qui s'est dit, points clés, prochaines étapes…">${esc(r.cr||'')}</textarea>
+            <div style="display:flex;gap:8px;margin-top:6px;flex-wrap:wrap">
+              <button class="btn btn-primary btn-sm" onclick="saveCR('${p.id}','${r.id}')">💾 Enregistrer le compte-rendu</button>
+              <button class="btn btn-ghost btn-sm" onclick="toggleRdvDone('${p.id}','${r.id}')">${r.done?'↩︎ Marquer à venir':'✓ Marquer effectué'}</button>
+            </div>
+          </details></div>`).join(''):'<div class="li-sub">Aucun rendez-vous planifié.</div>'}
       </div>
     </div>`;
   document.getElementById('detailOverlay').classList.add('open');
@@ -1939,6 +1968,19 @@ function saveRdv(id,action){
   openDetail(id,'rdv');
 }
 function delRdv(id,rid){ var p=DATA.find(function(x){return x.id===id;}); if(!p)return; p.rdvs=p.rdvs.filter(function(r){return r.id!==rid;}); save(); refreshAll(); openDetail(id,'rdv'); }
+function saveCR(id,rid){
+  var p=DATA.find(function(x){return x.id===id;}); if(!p)return;
+  var r=(p.rdvs||[]).find(function(x){return x.id===rid;}); if(!r)return;
+  var ta=document.getElementById('cr_'+rid); r.cr=ta?ta.value.trim():'';
+  if(r.cr) r.done=true;
+  logActivity(p,'rdv','Compte-rendu RDV '+r.type+' ('+fmtDate(r.date)+') : '+(r.cr.length>90?r.cr.slice(0,90)+'…':r.cr||'(vide)'));
+  save(); refreshAll(); openDetail(id,'rdv'); toast('Compte-rendu enregistré');
+}
+function toggleRdvDone(id,rid){
+  var p=DATA.find(function(x){return x.id===id;}); if(!p)return;
+  var r=(p.rdvs||[]).find(function(x){return x.id===rid;}); if(!r)return;
+  r.done=!r.done; save(); refreshAll(); openDetail(id,'rdv');
+}
 function allRdvs(){
   var out=[]; DATA.forEach(function(p){ (p.rdvs||[]).forEach(function(r){ out.push({p:p,r:r}); }); });
   return out;
@@ -1969,7 +2011,7 @@ function renderRdv(){
       '<td><span class="badge" style="background:var(--violet-soft);color:var(--violet)">'+rdvIcon(r.type)+' '+esc(r.type)+'</span></td>'+
       '<td><div class="cell-name">'+esc(p.nom)+'</div><div class="cell-sub">'+esc(p.ville||'')+'</div></td>'+
       '<td class="hide-sm">'+(p.contactNom?esc(p.contactNom):'—')+'</td>'+
-      '<td class="hide-sm">'+(r.objet?esc(r.objet):'—')+'</td>'+
+      '<td class="hide-sm">'+(r.objet?esc(r.objet):'—')+(r.cr?' <span title="Compte-rendu rempli">📝</span>':'')+(r.done?' <span style="color:var(--green)" title="Effectué">✓</span>':'')+'</td>'+
       '<td class="hide-sm">'+(r.owner?'<span class="avatar sm" title="'+esc(r.owner)+'">'+initials(r.owner)+'</span>':'—')+'</td>'+
       '<td style="text-align:right;white-space:nowrap">'+
         '<a class="icon-btn" title="Google Agenda" style="width:28px;height:28px;text-decoration:none" href="'+gcalLink(p,r)+'" target="_blank">📅</a> '+
